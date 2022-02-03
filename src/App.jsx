@@ -1,12 +1,16 @@
 import React from 'react';
 import Typography from '@mui/material/Typography';
 import ShopHeader from './components/header/ShopHeader';
-import ShopSideBar from './components/sidebar/ShopSideBar';
+import ShopMenuSideBar from './components/sidebar/ShopMenuSideBar';
+import LoginModal from './components/modal/LoginModal';
+import CartSideBar from './components/sidebar/CartSideBar';
 
 const App = () => {
   return (
     <>
-      <ShopSideBar />
+      <LoginModal />
+      <ShopMenuSideBar />
+      <CartSideBar />
       <ShopHeader />
       <Typography variant="h2">Hello world</Typography>
     </>
