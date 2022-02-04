@@ -8,11 +8,13 @@ import {
   TextField,
   Stack,
   Box,
-  Button,
 } from '@mui/material';
+import LoginIcon from '@mui/icons-material/Login';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 import authApi from '../../apis/auth';
 import AuthContext from './../../contexts/AuthContext';
+import AlertContext from './../../contexts/AlertContext';
 
 const style = {
   position: 'absolute',
@@ -29,21 +31,26 @@ const style = {
 const LoginModal = () => {
   const modalContext = useContext(ModalContext);
   const authContext = useContext(AuthContext);
+  const alertContext = useContext(AlertContext);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const login = async (e) => {
     e.preventDefault();
-
-    console.log('event');
+    if (loading) return;
+    setLoading(true);
     const res = await authApi.logIn(email, password);
+    setLoading(false);
     if (res.status === 200) {
       authContext.toggleLoggedIn();
       modalContext.toggleLoginModal();
       if (res.role !== '') {
         authContext.setRole(res.role);
       }
+      alertContext.showSuccessAlert('Đăng nhập thành công');
       return;
     }
     if (res.status === 400) {
@@ -75,15 +82,20 @@ const LoginModal = () => {
                   type="password"
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                {loginError && (
-                  <Typography variant="subtitle1" color="danger">
-                    Sai email hoặc mật khẩu
-                  </Typography>
-                )}
                 <Box sx={{ textAlign: 'center', pt: 2 }}>
-                  <Button variant="contained" onClick={login}>
+                  {loginError && (
+                    <Typography variant="subtitle1" color="red">
+                      Sai email hoặc mật khẩu
+                    </Typography>
+                  )}
+                  <LoadingButton
+                    loading={loading}
+                    loadingPosition="start"
+                    startIcon={<LoginIcon />}
+                    variant="contained"
+                    onClick={login}>
                     Đăng nhập
-                  </Button>
+                  </LoadingButton>
                 </Box>
               </Stack>
             </form>

@@ -7,12 +7,13 @@ import {
   ListItemText,
 } from '@mui/material';
 
-const SideBarItem = ({ icon, text }) => {
+const SideBarItem = ({ startIcon, endIcon, text, onClick }) => {
   return (
-    <ListItem disablePadding>
+    <ListItem disablePadding onClick={onClick}>
       <ListItemButton>
-        <ListItemIcon sx={{ mr: 0 }}>{icon}</ListItemIcon>
+        <ListItemIcon sx={{ mr: 0 }}>{startIcon}</ListItemIcon>
         <ListItemText primary={text} />
+        <ListItemIcon sx={{ mr: 0 }}>{endIcon}</ListItemIcon>
       </ListItemButton>
     </ListItem>
   );

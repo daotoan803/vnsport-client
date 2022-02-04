@@ -9,20 +9,29 @@ import { BrowserRouter } from 'react-router-dom';
 import { SideBarContextProvider } from './contexts/SideBarContext';
 import { ModalContextProvider } from './contexts/ModalContext';
 import { AuthContextProvider } from './contexts/AuthContext';
+import DateAdapter from '@mui/lab/AdapterDateFns';
+import viLocale from 'date-fns/locale/vi';
+
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { AlertContextProvider } from './contexts/AlertContext';
 
 ReactDOM.render(
   <React.StrictMode>
     <CssBaseline>
       <ThemeProvider theme={theme}>
-        <BrowserRouter>
-          <AuthContextProvider>
-            <ModalContextProvider>
-              <SideBarContextProvider>
-                <App />
-              </SideBarContextProvider>
-            </ModalContextProvider>
-          </AuthContextProvider>
-        </BrowserRouter>
+        <LocalizationProvider dateAdapter={DateAdapter} locale={viLocale}>
+          <BrowserRouter>
+            <AuthContextProvider>
+              <AlertContextProvider>
+                <ModalContextProvider>
+                  <SideBarContextProvider>
+                    <App />
+                  </SideBarContextProvider>
+                </ModalContextProvider>
+              </AlertContextProvider>
+            </AuthContextProvider>
+          </BrowserRouter>
+        </LocalizationProvider>
       </ThemeProvider>
     </CssBaseline>
   </React.StrictMode>,

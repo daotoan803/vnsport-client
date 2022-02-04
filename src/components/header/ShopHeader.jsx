@@ -7,6 +7,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SideBarContext from '../../contexts/SideBarContext';
 import Logo from './../logo/Logo';
 import AuthContext from './../../contexts/AuthContext';
+import ToggleSignupModalWrapper from './../modal/ToggleSignupModalWrapper';
 
 const ShopHeader = () => {
   const sideBarContext = useContext(SideBarContext);
@@ -28,7 +29,9 @@ const ShopHeader = () => {
             </IconButton>
             <Logo />
             {!authContext.isLoggedIn && (
-              <Button color="primary">Đăng ký</Button>
+              <ToggleSignupModalWrapper>
+                <Button color="primary">Đăng ký</Button>
+              </ToggleSignupModalWrapper>
             )}
             {authContext.isLoggedIn && (
               <IconButton color="primary">

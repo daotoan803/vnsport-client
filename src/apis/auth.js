@@ -40,13 +40,20 @@ const auth = (() => {
   };
 
   const signup = async ({ name, email, dob, gender, password }) => {
-    const { status, data } = await axios.post('/api/user/signup', {
-      name,
-      email,
-      dob,
-      gender,
-      password,
-    });
+    let res = null;
+    try {
+      res = await axios.post('/api/user/signup', {
+        name,
+        email,
+        dob,
+        gender,
+        password,
+      });
+    } catch (e) {
+      res = e.response;
+    }
+
+    const { status, data } = res;
 
     if (status === 200) {
       storeToken(data.token);
