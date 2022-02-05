@@ -2,6 +2,25 @@ import auth from './auth';
 import axios from 'axios';
 
 const product = (() => {
+  const availableState = {
+    available: 'available',
+    outStock: 'outStock',
+    hidden: 'hidden',
+  };
+
+  const getProductDetail = async (id) => {
+    let res = null;
+    try {
+      res = await axios.get(`/api/products/${id}`);
+    } catch (e) {
+      if (e.response) res = e.response;
+
+      throw e;
+    }
+
+    return { status: res.status, data: res.data };
+  };
+
   const getProducts = async (page = 1, limit = 20) => {
     let res = null;
     try {
@@ -59,7 +78,13 @@ const product = (() => {
     return { status, data };
   };
 
-  return { getProducts, addProduct, uploadImages };
+  return {
+    getProducts,
+    addProduct,
+    uploadImages,
+    availableState,
+    getProductDetail,
+  };
 })();
 
 export default product;

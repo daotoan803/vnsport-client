@@ -2,9 +2,14 @@ import React from 'react';
 import Link from '@mui/material/Link';
 import { Link as ReactRouterLink } from 'react-router-dom';
 
-const RouterLink = ({ children, to }) => {
+const RouterLink = ({ children, to, onClick }) => {
   return (
-    <Link component={ReactRouterLink} to={to} underline="none" color="inherit">
+    <Link
+      onClick={onClick}
+      component={ReactRouterLink}
+      to={to}
+      underline="none"
+      color="inherit">
       {children}
     </Link>
   );

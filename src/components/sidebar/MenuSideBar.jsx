@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, lazy, Suspense } from 'react';
 import SideBarContext from '../../contexts/SideBarContext';
 
 import { Drawer, Divider, Stack, Slide, Box } from '@mui/material';
@@ -10,14 +10,9 @@ import ToggleSignupModalWrapper from '../modal/ToggleSignupModalWrapper';
 import ToggleLoginModalWrapper from '../modal/ToggleLoginModal';
 import LogoutButton from '../button/LogoutButton';
 import ShopNavigationList from './ShopNavigationList';
+import CircularProgress from '@mui/material/CircularProgress';
 
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import auth from '../../apis/auth';
-import SideBarItem from './SideBarItem';
-import AdminNavigationList from './AdminNavigationList';
-import StorefrontIcon from '@mui/icons-material/Storefront';
+const AdminNavigationList = lazy(() => import('./AdminNavigationList'));
 
 const MenuSideBar = () => {
   const sideBarContext = useContext(SideBarContext);
@@ -33,9 +28,12 @@ const MenuSideBar = () => {
     }
   }, [authContext.isLoggedIn]);
 
-  const toggleSideBar = () => sideBarContext.toggleSideBar();
+  const toggleSideBar = () => {
+    sideBarContext.toggleSideBar();
+  };
   const toggleHideShopNavigation = () =>
     setHideShopNavigation(!hideShopNavigation);
+  const toggleAdminMenu = () => setShowingAdminMenu(!showingAdminMenu);
 
   return (
     <Drawer
@@ -51,15 +49,10 @@ const MenuSideBar = () => {
           in={!showingAdminMenu}
           onExited={toggleHideShopNavigation}>
           <Box>
-            {authContext.role === auth.availableRole.admin && (
-              <SideBarItem
-                onClick={() => setShowingAdminMenu(!showingAdminMenu)}
-                startIcon={<AdminPanelSettingsIcon />}
-                endIcon={<ChevronRightIcon />}
-                text="Quản lý"
-              />
-            )}
-            <ShopNavigationList />
+            <ShopNavigationList
+              toggleAdminMenu={toggleAdminMenu}
+              toggleSideBar={toggleSideBar}
+            />
           </Box>
         </Slide>
       )}
@@ -69,15 +62,12 @@ const MenuSideBar = () => {
           in={showingAdminMenu}
           onExited={toggleHideShopNavigation}>
           <Box>
-            {authContext.role === auth.availableRole.admin && (
-              <SideBarItem
-                onClick={() => setShowingAdminMenu(!showingAdminMenu)}
-                startIcon={<ChevronLeftIcon />}
-                endIcon={<StorefrontIcon />}
-                text="Cửa hàng"
+            <Suspense fallback={<CircularProgress />}>
+              <AdminNavigationList
+                toggleAdminMenu={toggleAdminMenu}
+                toggleSideBar={toggleSideBar}
               />
-            )}
-            <AdminNavigationList />
+            </Suspense>
           </Box>
         </Slide>
       )}
