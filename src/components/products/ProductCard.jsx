@@ -42,6 +42,7 @@ const ProductCard = ({ id, title, price, discountPrice, image, state }) => {
           component="img"
           image={image}
           alt={title}
+          sx={{ cursor: 'pointer' }}
           onClick={navigateToProductPage}
         />
         <CardContent
@@ -51,9 +52,11 @@ const ProductCard = ({ id, title, price, discountPrice, image, state }) => {
             flexDirection: 'column',
             justifyContent: 'space-between',
             flexGrow: 1,
-          }}>
-          <Typography variant="subtitle2" component="p">
-            {title}
+            cursor: 'pointer',
+          }}
+          style={{ paddingBottom: '0.5rem' }}>
+          <Typography variant="subtitle1" component="p" align="center">
+            <strong>{title}</strong>
           </Typography>
           <Box>
             {discountPrice && (
@@ -65,8 +68,14 @@ const ProductCard = ({ id, title, price, discountPrice, image, state }) => {
                 <i>{formatNumberToVnd(price)}</i>
               </Typography>
             )}
-            <Typography component="p" variant="body1" color="red" align="right">
-              {formatNumberToVnd(discountPrice ? discountPrice : price)}
+            <Typography
+              component="p"
+              variant="subtitle1"
+              color="red"
+              align="right">
+              <strong>
+                {formatNumberToVnd(discountPrice ? discountPrice : price)}
+              </strong>
             </Typography>
           </Box>
         </CardContent>

@@ -13,9 +13,7 @@ const product = (() => {
     try {
       res = await axios.get(`/api/products/${id}`);
     } catch (e) {
-      if (e.response) res = e.response;
-
-      throw e;
+      res = e.response;
     }
 
     return { status: res.status, data: res.data };
@@ -26,9 +24,7 @@ const product = (() => {
     try {
       res = await axios.get(`/api/products?page=${page}&limit=${limit}`);
     } catch (e) {
-      if (e.response) res = e.response;
-
-      throw e;
+      res = e.response;
     }
 
     return { status: res.status, data: res.data };

@@ -11,17 +11,13 @@ import AuthContext from './../../contexts/AuthContext';
 import auth from './../../apis/auth';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import CategoryNavigation from './CategoryNavigation';
 
 const shopNavigation = [
   {
     link: '/',
     startIcon: <HomeIcon />,
     text: 'Trang chủ',
-  },
-  {
-    link: '/products',
-    startIcon: <ShoppingBagIcon />,
-    text: 'Sản phẩm',
   },
   {
     link: '/contact',
@@ -49,6 +45,7 @@ const ShopNavigationList = ({ toggleAdminMenu, toggleSideBar }) => {
           <SideBarItem startIcon={nav.startIcon} text={nav.text} />
         </RouterLink>
       ))}
+      <CategoryNavigation />
     </List>
   );
 };
