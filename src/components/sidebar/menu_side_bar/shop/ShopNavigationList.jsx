@@ -2,13 +2,12 @@ import React, { useContext } from 'react';
 
 import { List } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
-import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import ContactPageIcon from '@mui/icons-material/ContactPage';
 
-import RouterLink from '../navigation/RouterLink';
-import SideBarItem from './SideBarItem';
-import AuthContext from './../../contexts/AuthContext';
-import auth from './../../apis/auth';
+import RouterLink from '../../../navigation/SideBarLink';
+import SideBarItem from '../SideBarItem';
+import AuthContext from '../../../../contexts/AuthContext';
+import auth from '../../../../apis/auth';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CategoryNavigation from './CategoryNavigation';
@@ -26,7 +25,7 @@ const shopNavigation = [
   },
 ];
 
-const ShopNavigationList = ({ toggleAdminMenu, toggleSideBar }) => {
+const ShopNavigationList = ({ toggleAdminMenu }) => {
   const authContext = useContext(AuthContext);
 
   return (
@@ -41,7 +40,7 @@ const ShopNavigationList = ({ toggleAdminMenu, toggleSideBar }) => {
       )}
 
       {shopNavigation.map((nav) => (
-        <RouterLink to={nav.link} onClick={toggleSideBar} key={nav.text}>
+        <RouterLink to={nav.link} key={nav.text}>
           <SideBarItem startIcon={nav.startIcon} text={nav.text} />
         </RouterLink>
       ))}

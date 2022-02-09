@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 
 import { Drawer } from '@mui/material';
-import SideBarContext from './../../contexts/SideBarContext';
+import SideBarContext from '../../../contexts/SideBarContext';
 
 const CartSideBar = () => {
   const sideBarContext = useContext(SideBarContext);

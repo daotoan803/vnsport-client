@@ -1,27 +1,16 @@
 import React, { useState, useEffect } from 'react';
 
-import RouterLink from '../navigation/RouterLink';
+import categoryApi from '../../../../apis/category';
 
-import categoryApi from './../../apis/category';
-
-import {
-  Accordion,
-  AccordionSummary,
-  Typography,
-  AccordionDetails,
-  Box,
-  Grow,
-  IconButton,
-  Collapse,
-  List,
-} from '@mui/material';
+import { Box, IconButton, Collapse, List } from '@mui/material';
 
 import CategoryIcon from '@mui/icons-material/Category';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
-import SideBarItem from './SideBarItem';
+import SideBarItem from '../SideBarItem';
+import SideBarLink from './../../../navigation/SideBarLink';
 
 const CategoryNavigation = () => {
   const [categoryGroups, setCategoryGroups] = useState([]);
@@ -52,21 +41,35 @@ const CategoryNavigation = () => {
         <List sx={{ pl: 1 }}>
           {categoryGroups.map((group) => (
             <Box key={group.id}>
-              <SideBarItem
-                onClick={() => expandCategoryGroup(group.id)}
-                text={group.name}
-                endIcon={
-                  expanded !== group.id ? (
-                    <ExpandMoreIcon />
-                  ) : (
-                    <ExpandLessIcon />
-                  )
-                }
-              />
+              <SideBarLink to={`/${group.id}`}>
+                <SideBarItem
+                  onClick={() => console.log('clicked')}
+                  text={group.name}
+                  endIcon={
+                    <IconButton
+                      size="large"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        expandCategoryGroup(group.id);
+                      }}>
+                      {expanded !== group.id ? (
+                        <ExpandMoreIcon />
+                      ) : (
+                        <ExpandLessIcon />
+                      )}
+                    </IconButton>
+                  }
+                />
+              </SideBarLink>
               <Collapse in={expanded === group.id} unmountOnExit>
                 <List sx={{ pl: 2 }}>
                   {group.categories.map((category) => (
-                    <SideBarItem key={category.id} text={category.name} />
+                    <SideBarLink
+                      to={`/${group.id}/${category.id}`}
+                      key={category.id}>
+                      <SideBarItem text={category.name} />
+                    </SideBarLink>
                   ))}
                 </List>
               </Collapse>

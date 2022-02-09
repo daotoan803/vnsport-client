@@ -9,8 +9,8 @@ import {
 
 const SideBarItem = ({ startIcon, endIcon, text, onClick }) => {
   return (
-    <ListItem disablePadding onClick={onClick}>
-      <ListItemButton>
+    <ListItem disablePadding>
+      <ListItemButton onClick={onClick}>
         <ListItemIcon sx={{ mr: 0 }}>{startIcon}</ListItemIcon>
         <ListItemText primary={text} />
         <ListItemIcon sx={{ mr: 0 }}>{endIcon}</ListItemIcon>

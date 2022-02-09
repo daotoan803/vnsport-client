@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import RouterLink from '../navigation/RouterLink';
+import RouterLink from '../navigation/SideBarLink';
 
 const Logo = (props) => {
   return (

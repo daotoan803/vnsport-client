@@ -1,18 +1,18 @@
 import React, { useContext, useState, useEffect, lazy, Suspense } from 'react';
-import SideBarContext from '../../contexts/SideBarContext';
+import SideBarContext from '../../../contexts/SideBarContext';
 
 import { Drawer, Divider, Stack, Slide, Box } from '@mui/material';
 
-import Logo from '../logo/Logo';
+import Logo from '../../logo/Logo';
 import Button from '@mui/material/Button';
-import AuthContext from '../../contexts/AuthContext';
-import ToggleSignupModalWrapper from '../modal/ToggleSignupModalWrapper';
-import ToggleLoginModalWrapper from '../modal/ToggleLoginModal';
-import LogoutButton from '../button/LogoutButton';
-import ShopNavigationList from './ShopNavigationList';
+import AuthContext from '../../../contexts/AuthContext';
+import ToggleSignupModalWrapper from '../../modal/ToggleSignupModalWrapper';
+import ToggleLoginModalWrapper from '../../modal/ToggleLoginModal';
+import LogoutButton from '../../button/LogoutButton';
+import ShopNavigationList from './shop/ShopNavigationList';
 import CircularProgress from '@mui/material/CircularProgress';
 
-const AdminNavigationList = lazy(() => import('./AdminNavigationList'));
+const AdminNavigationList = lazy(() => import('./admin/AdminNavigationList'));
 
 const MenuSideBar = () => {
   const sideBarContext = useContext(SideBarContext);
@@ -49,10 +49,7 @@ const MenuSideBar = () => {
           in={!showingAdminMenu}
           onExited={toggleHideShopNavigation}>
           <Box>
-            <ShopNavigationList
-              toggleAdminMenu={toggleAdminMenu}
-              toggleSideBar={toggleSideBar}
-            />
+            <ShopNavigationList toggleAdminMenu={toggleAdminMenu} />
           </Box>
         </Slide>
       )}
@@ -63,10 +60,7 @@ const MenuSideBar = () => {
           onExited={toggleHideShopNavigation}>
           <Box>
             <Suspense fallback={<CircularProgress />}>
-              <AdminNavigationList
-                toggleAdminMenu={toggleAdminMenu}
-                toggleSideBar={toggleSideBar}
-              />
+              <AdminNavigationList toggleAdminMenu={toggleAdminMenu} />
             </Suspense>
           </Box>
         </Slide>

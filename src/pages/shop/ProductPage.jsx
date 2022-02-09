@@ -6,6 +6,8 @@ import ProductList from '../../components/products/ProductList';
 import categoryApi from './../../apis/category';
 import brandApi from './../../apis/brand';
 
+import { useParams } from 'react-router-dom';
+
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [categoryOptions, setCategoryOptions] = useState([]);

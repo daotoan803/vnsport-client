@@ -3,17 +3,17 @@ import React, { useContext } from 'react';
 import { List } from '@mui/material';
 
 import ShowChartIcon from '@mui/icons-material/ShowChart';
-import RouterLink from '../navigation/RouterLink';
-import SideBarItem from './SideBarItem';
+import RouterLink from '../../../navigation/SideBarLink';
+import SideBarItem from '../SideBarItem';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import GroupIcon from '@mui/icons-material/Group';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import auth from '../../apis/auth';
+import auth from '../../../../apis/auth';
 import StorefrontIcon from '@mui/icons-material/Storefront';
-import AuthContext from './../../contexts/AuthContext';
+import AuthContext from '../../../../contexts/AuthContext';
 
 const adminNavigation = [
   {
