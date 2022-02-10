@@ -8,6 +8,14 @@ const product = (() => {
     hidden: 'hidden',
   };
 
+  const availableSortByOption = {
+    title: 'title',
+    mostVisited: 'mostVisited',
+    mostSold: 'mostSold',
+    priceDesc: 'priceDesc',
+    priceAsc: 'priceAsc',
+  };
+
   const getProductDetail = async (id) => {
     let res = null;
     try {
@@ -19,7 +27,7 @@ const product = (() => {
     return { status: res.status, data: res.data };
   };
 
-  const getProducts = async (page = 1, limit = 20) => {
+  const getListOfProductPreview = async (page = 1, limit = 20) => {
     let res = null;
     try {
       res = await axios.get(`/api/products?page=${page}&limit=${limit}`);
@@ -27,6 +35,37 @@ const product = (() => {
       res = e.response;
     }
 
+    return { status: res.status, data: res.data };
+  };
+
+  const findListOfProductPreviewByCategoryGroup = async (
+    categoryGroupCode,
+    { brand = -1, minPrice = null, maxPrice = null, sortBy = null }
+  ) => {
+    const brandFilterQuery = Number(brand) !== -1 ? `brand=${brand}` : '';
+    const minPriceQuery = minPrice ? `minPrice=${minPrice}` : '';
+    const maxPriceQuery = maxPrice ? `maxPrice=${maxPrice}` : '';
+    const sortByQuery = availableSortByOption[sortBy]
+      ? `sortBy=${availableSortByOption[sortBy]}`
+      : '';
+
+    let queryOption = [
+      sortByQuery,
+      brandFilterQuery,
+      minPriceQuery,
+      maxPriceQuery,
+    ]
+      .filter((option) => option !== '')
+      .join('&');
+
+    let res = null;
+    try {
+      res = await axios.get(
+        `/api/products/category-group/${categoryGroupCode}?${queryOption}`
+      );
+    } catch (e) {
+      res = e.response;
+    }
     return { status: res.status, data: res.data };
   };
 
@@ -75,11 +114,13 @@ const product = (() => {
   };
 
   return {
-    getProducts,
+    getListOfProductPreview,
     addProduct,
     uploadImages,
     availableState,
     getProductDetail,
+    findListOfProductPreviewByCategoryGroup,
+    availableSortByOption,
   };
 })();
 

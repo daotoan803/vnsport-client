@@ -41,7 +41,9 @@ const CategoryNavigation = () => {
         <List sx={{ pl: 1 }}>
           {categoryGroups.map((group) => (
             <Box key={group.id}>
-              <SideBarLink to={`/${group.id}`}>
+              <SideBarLink
+                to={`/${group.code}`}
+                state={{ categoryGroupId: group.id }}>
                 <SideBarItem
                   onClick={() => console.log('clicked')}
                   text={group.name}
@@ -66,7 +68,8 @@ const CategoryNavigation = () => {
                 <List sx={{ pl: 2 }}>
                   {group.categories.map((category) => (
                     <SideBarLink
-                      to={`/${group.id}/${category.id}`}
+                      to={`/${group.code}/${category.code}`}
+                      state={{ categoryId: category.id }}
                       key={category.id}>
                       <SideBarItem text={category.name} />
                     </SideBarLink>

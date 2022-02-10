@@ -14,7 +14,7 @@ const ProductPage = () => {
   const [brandOptions, setBrandOptions] = useState([]);
 
   useEffect(() => {
-    productApi.getProducts().then(({ data }) => {
+    productApi.getListOfProductPreview().then(({ data }) => {
       setProducts(data);
     });
     categoryApi.getCategoryOptions().then(({ data }) => {

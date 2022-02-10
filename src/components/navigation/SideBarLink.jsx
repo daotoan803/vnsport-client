@@ -1,20 +1,24 @@
 import React, { useContext } from 'react';
 import Link from '@mui/material/Link';
-import { Link as ReactRouterLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import SideBarContext from '../../contexts/SideBarContext';
 
-const SideBarLink = ({ children, to, onClick = () => {} }) => {
+const SideBarLink = ({ children, to, state = {}, onClick = () => {} }) => {
   const sideBarContext = useContext(SideBarContext);
 
+  const navigate = useNavigate();
+
   return (
-    <Link component={ReactRouterLink} to={to} underline="none" color="inherit">
-      <div
-        onClick={() => {
-          sideBarContext.toggleSideBar();
-          onClick();
-        }}>
-        {children}
-      </div>
+    <Link
+      onClick={(e) => {
+        e.preventDefault();
+        navigate(to, { state });
+        sideBarContext.toggleSideBar();
+        onClick();
+      }}
+      underline="none"
+      color="inherit">
+      {children}
     </Link>
   );
 };

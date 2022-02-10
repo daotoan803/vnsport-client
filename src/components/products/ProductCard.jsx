@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatNumberToVnd } from '../../utils/currency';
+import { formatNumberToVnd } from '../../utils/currency.utils';
 import product from './../../apis/product';
 
 import { useNavigate } from 'react-router-dom';
