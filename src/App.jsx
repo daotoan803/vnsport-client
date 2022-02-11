@@ -1,20 +1,22 @@
 import React, { useContext, lazy, Suspense } from 'react';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
+import Card from '@mui/material/Card';
+
+import { Container } from '@mui/material';
+import { Routes, Route } from 'react-router-dom';
+
 import ShopHeader from './components/header/ShopHeader';
 import ModalContext from './contexts/ModalContext';
 import SideBarContext from './contexts/SideBarContext';
-import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
 import MenuSideBar from './components/sidebar/menu_side_bar/MenuSideBar';
 import CartSideBar from './components/sidebar/cart_side_bar/CartSideBar';
 
-import { Routes, Route } from 'react-router-dom';
-
 const LoginModal = lazy(() => import('./components/modal/LoginModal'));
 const SignupModal = lazy(() => import('./components/modal/SignupModal'));
-const ProductPage = lazy(() => import('./pages/shop/ProductPage'));
-import ProductDetailPage from './pages/shop/ProductDetailPage';
-import GroupCategoryPage from './pages/shop/GroupCategoryPage';
+const ProductDetailPage = lazy(() => import('./pages/shop/ProductDetailPage'));
+const ProductsPage = lazy(() => import('./pages/shop/ProductsPage'));
 
 const App = () => {
   const modalContext = useContext(ModalContext);
@@ -43,33 +45,29 @@ const App = () => {
       {sideBarContext.sideBarIsOpen && <MenuSideBar />}
       {sideBarContext.cartIsOpen && <CartSideBar />}
       <ShopHeader />
-      <Typography variant="h2">Hello world</Typography>
-      <Routes>
-        <Route path="/products/:id" element={<ProductDetailPage />} />
 
-        <Route
-          path="/:categoryGroupId"
-          element={
-            <Suspense fallback={fallback}>
-              <GroupCategoryPage />
-            </Suspense>
-          }
-        />
-        
-        <Route
-          path="/:categoryGroupId/:categoryId"
-          element={
-            <Suspense fallback={fallback}>
-              <ProductPage />
-            </Suspense>
-          }
-        />
+      <Container sx={{ mt: 5, px: 0 }}>
+        <Card sx={{ py: 3, px: 0.5, width: '100%' }}>
+          <Routes>
+            <Route path="/product/:id" element={<ProductDetailPage />} />
 
-        <Route
-          path=""
-          element={<Typography variant="h1">404 NOT FOUND</Typography>}
-        />
-      </Routes>
+            <Route
+              path="/products/:categoryGroupCode"
+              exact
+              element={
+                <Suspense fallback={fallback}>
+                  <ProductsPage />
+                </Suspense>
+              }
+            />
+
+            <Route
+              path="*"
+              element={<Typography variant="h1">404 NOT FOUND</Typography>}
+            />
+          </Routes>
+        </Card>
+      </Container>
     </>
   );
 };

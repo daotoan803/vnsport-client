@@ -1,10 +1,14 @@
 import axios from 'axios';
 
 const categoryApi = (() => {
-  const getCategoryOptions = async () => {
+  const getCategories = async (categoryGroupCodeOrId) => {
+    let categoryGroupQuery = categoryGroupCodeOrId
+      ? `group=${categoryGroupCodeOrId}`
+      : '';
+
     let res = null;
     try {
-      res = await axios.get('/api/categories');
+      res = await axios.get(`/api/categories?${categoryGroupQuery}`);
     } catch (e) {
       res = e.response;
     }
@@ -23,7 +27,7 @@ const categoryApi = (() => {
     return { status: res.status, data: res.data };
   };
 
-  return { getCategoryOptions, getCategoryGroups };
+  return { getCategories, getCategoryGroups };
 })();
 
 export default categoryApi;

@@ -1,10 +1,14 @@
 import axios from 'axios';
 
 const brandApi = (() => {
-  const getBrandOptions = async () => {
+  const getBrands = async ({ categoryGroupCodeOrId, categoryCodeOrId }) => {
+    let query = '';
+    if (categoryCodeOrId) query = `category=${categoryCodeOrId}`;
+    else query = `categoryGroup=${categoryGroupCodeOrId}`;
+
     let res = null;
     try {
-      res = await axios.get('/api/brands');
+      res = await axios.get(`/api/brands?${query}`);
     } catch (e) {
       res = e.response;
     }
@@ -12,18 +16,7 @@ const brandApi = (() => {
     return { status: res.status, data: res.data };
   };
 
-  const getListOfBrandByCategoryGroup = async (categoryGroupCode) => {
-    let res = null;
-    try {
-      res = await axios.get('/api/brands/category-group/' + categoryGroupCode);
-    } catch (e) {
-      res = e.response;
-    }
-
-    return { status: res.status, data: res.data };
-  };
-
-  return { getBrandOptions, getListOfBrandByCategoryGroup };
+  return { getBrands };
 })();
 
 export default brandApi;

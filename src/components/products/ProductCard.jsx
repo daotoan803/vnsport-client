@@ -8,17 +8,26 @@ import {
   Card,
   CardMedia,
   CardContent,
-  CardActions,
-  Button,
   Typography,
   Box,
+  Rating,
 } from '@mui/material';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 
-const ProductCard = ({ id, title, price, discountPrice, image, state }) => {
+const ProductCard = ({
+  id,
+  title,
+  price,
+  discountPrice,
+  image,
+  state,
+  visitedCount,
+  reviewCount,
+}) => {
   let navigate = useNavigate();
 
   const navigateToProductPage = () => {
-    navigate(`/products/${id}`);
+    navigate(`/product/${id}`);
   };
 
   const isOutStock = state === product.availableState.outStock;
@@ -42,7 +51,7 @@ const ProductCard = ({ id, title, price, discountPrice, image, state }) => {
           component="img"
           image={image}
           alt={title}
-          sx={{ cursor: 'pointer' }}
+          sx={{ cursor: 'pointer', minHeight: 150 }}
           onClick={navigateToProductPage}
         />
         <CardContent
@@ -51,10 +60,24 @@ const ProductCard = ({ id, title, price, discountPrice, image, state }) => {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
+            alignItems: 'stretch',
             flexGrow: 1,
             cursor: 'pointer',
           }}
           style={{ paddingBottom: '0.5rem' }}>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center">
+            <Box display="flex" alignItems="center">
+              <Rating size="small" sx={{ mr: 0.5 }} readOnly></Rating>
+              <Typography fontSize="0.9rem">({reviewCount})</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" sx={{ fontSize: '1rem' }}>
+              <RemoveRedEyeIcon fontSize="inherit" sx={{ mr: 0.5 }} />
+              <Typography fontSize="inherit">{visitedCount}</Typography>
+            </Box>
+          </Box>
           <Typography variant="subtitle1" component="p" align="center">
             <strong>{title}</strong>
           </Typography>
@@ -89,15 +112,6 @@ const ProductCard = ({ id, title, price, discountPrice, image, state }) => {
           </Box>
         </CardContent>
       </Box>
-      <CardActions
-        sx={{
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-          <Button variant='contained'>
-            Thêm vào giỏ hàng
-          </Button>
-      </CardActions>
     </Card>
   );
 };

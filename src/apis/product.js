@@ -27,42 +27,61 @@ const product = (() => {
     return { status: res.status, data: res.data };
   };
 
-  const getListOfProductPreview = async (page = 1, limit = 20) => {
-    let res = null;
-    try {
-      res = await axios.get(`/api/products?page=${page}&limit=${limit}`);
-    } catch (e) {
-      res = e.response;
-    }
+  // const getListOfProductPreview = async (page = 1, limit = 20) => {
+  //   let res = null;
+  //   try {
+  //     res = await axios.get(`/api/products?page=${page}&limit=${limit}`);
+  //   } catch (e) {
+  //     res = e.response;
+  //   }
 
-    return { status: res.status, data: res.data };
-  };
+  //   return { status: res.status, data: res.data };
+  // };
 
-  const findListOfProductPreviewByCategoryGroup = async (
-    categoryGroupCode,
-    { brand = -1, minPrice = null, maxPrice = null, sortBy = null }
-  ) => {
+  const getListOfProductPreview = async ({
+    categoryGroup = null,
+    brand = null,
+    minPrice = null,
+    maxPrice = null,
+    sortBy = null,
+    category = null,
+    page,
+    limit,
+  }) => {
     const brandFilterQuery = Number(brand) !== -1 ? `brand=${brand}` : '';
     const minPriceQuery = minPrice ? `minPrice=${minPrice}` : '';
     const maxPriceQuery = maxPrice ? `maxPrice=${maxPrice}` : '';
     const sortByQuery = availableSortByOption[sortBy]
       ? `sortBy=${availableSortByOption[sortBy]}`
       : '';
+    const categoryGroupQuery = categoryGroup
+      ? `categoryGroup=${categoryGroup}`
+      : '';
+    const pageQuery = page ? `page=${page}` : '';
+    const limitQuery = limit ? `limit=${limit}` : '';
+
+    let categoryQuery = category ? `category=${category}` : '';
+    // if (!Number.isNaN(categoryQuery) && Number(category) < -1) {
+    //   categoryQuery = '';
+    // }
 
     let queryOption = [
+      pageQuery,
+      limitQuery,
       sortByQuery,
       brandFilterQuery,
       minPriceQuery,
       maxPriceQuery,
+      categoryQuery,
+      categoryGroupQuery,
     ]
       .filter((option) => option !== '')
       .join('&');
 
     let res = null;
     try {
-      res = await axios.get(
-        `/api/products/category-group/${categoryGroupCode}?${queryOption}`
-      );
+      const url = `/api/products?${queryOption}`;
+      res = await axios.get(url);
     } catch (e) {
       res = e.response;
     }
@@ -119,7 +138,6 @@ const product = (() => {
     uploadImages,
     availableState,
     getProductDetail,
-    findListOfProductPreviewByCategoryGroup,
     availableSortByOption,
   };
 })();

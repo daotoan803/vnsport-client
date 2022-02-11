@@ -42,10 +42,9 @@ const CategoryNavigation = () => {
           {categoryGroups.map((group) => (
             <Box key={group.id}>
               <SideBarLink
-                to={`/${group.code}`}
+                to={`/products/${group.code}?page=1`}
                 state={{ categoryGroupId: group.id }}>
                 <SideBarItem
-                  onClick={() => console.log('clicked')}
                   text={group.name}
                   endIcon={
                     <IconButton
@@ -68,7 +67,7 @@ const CategoryNavigation = () => {
                 <List sx={{ pl: 2 }}>
                   {group.categories.map((category) => (
                     <SideBarLink
-                      to={`/${group.code}/${category.code}`}
+                      to={`/products/${group.code}/${category.code}?page=1`}
                       state={{ categoryId: category.id }}
                       key={category.id}>
                       <SideBarItem text={category.name} />
