@@ -4,6 +4,8 @@ import auth from './../apis/auth';
 const AuthContext = createContext({
   isLoggedIn: false,
   role: '',
+  token: '',
+  setToken: '',
   toggleLoggedIn() {},
   setRole() {},
 });
@@ -13,6 +15,7 @@ export default AuthContext;
 export const AuthContextProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState('');
+  const [token, setToken] = useState(auth.getToken());
 
   useEffect(() => {
     setIsLoggedIn(auth.isLoggedIn());
@@ -24,7 +27,8 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, toggleLoggedIn, role, setRole }}>
+    <AuthContext.Provider
+      value={{ isLoggedIn, toggleLoggedIn, role, setRole, token, setToken }}>
       {children}
     </AuthContext.Provider>
   );

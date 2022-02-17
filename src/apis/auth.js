@@ -19,6 +19,7 @@ const auth = (() => {
   };
 
   const getRole = () => role;
+  const getToken = () => token;
 
   const logIn = async (email, password) => {
     const { data, status } = await axios
@@ -36,7 +37,7 @@ const auth = (() => {
     }
 
     if (status === 500) alert('something happen, please try again');
-    return { status: status, role: data.role };
+    return { status, data };
   };
 
   const signup = async ({ name, email, dob, gender, password }) => {
@@ -81,6 +82,7 @@ const auth = (() => {
     getRole,
     getAxiosAuthorizationConfig,
     availableRole,
+    getToken,
   };
 })();
 

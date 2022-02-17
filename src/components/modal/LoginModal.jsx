@@ -46,6 +46,7 @@ const LoginModal = () => {
     setLoading(false);
     if (res.status === 200) {
       authContext.toggleLoggedIn();
+      authContext.setToken(res.data.token);
       modalContext.toggleLoginModal();
       if (res.role !== '') {
         authContext.setRole(res.role);

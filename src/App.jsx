@@ -12,6 +12,7 @@ import ModalContext from './contexts/ModalContext';
 import SideBarContext from './contexts/SideBarContext';
 import MenuSideBar from './components/sidebar/menu_side_bar/MenuSideBar';
 import CartSideBar from './components/sidebar/cart_side_bar/CartSideBar';
+import PopupPopupChatWindow from './components/chat/PopupChatWindow';
 
 const LoginModal = lazy(() => import('./components/modal/LoginModal'));
 const SignupModal = lazy(() => import('./components/modal/SignupModal'));
@@ -44,6 +45,7 @@ const App = () => {
       )}
       {sideBarContext.sideBarIsOpen && <MenuSideBar />}
       {sideBarContext.cartIsOpen && <CartSideBar />}
+      <PopupPopupChatWindow />
       <ShopHeader />
 
       <Container sx={{ mt: 5, px: 0 }}>

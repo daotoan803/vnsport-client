@@ -19,6 +19,7 @@ import viLocale from 'date-fns/locale/vi';
 
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { AlertContextProvider } from './contexts/AlertContext';
+import { SocketContextProvider } from './contexts/SocketContext';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -26,15 +27,17 @@ ReactDOM.render(
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={DateAdapter} locale={viLocale}>
           <BrowserRouter>
-            <AuthContextProvider>
-              <AlertContextProvider>
-                <ModalContextProvider>
-                  <SideBarContextProvider>
-                    <App />
-                  </SideBarContextProvider>
-                </ModalContextProvider>
-              </AlertContextProvider>
-            </AuthContextProvider>
+            <SocketContextProvider>
+              <AuthContextProvider>
+                <AlertContextProvider>
+                  <ModalContextProvider>
+                    <SideBarContextProvider>
+                      <App />
+                    </SideBarContextProvider>
+                  </ModalContextProvider>
+                </AlertContextProvider>
+              </AuthContextProvider>
+            </SocketContextProvider>
           </BrowserRouter>
         </LocalizationProvider>
       </ThemeProvider>
