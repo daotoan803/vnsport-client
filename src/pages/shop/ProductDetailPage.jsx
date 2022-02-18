@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import productApi from './../../apis/product';
+import productApi from '../../apis/productApi';
 import { Container, Box } from '@mui/material';
 
 const ProductDetailPage = () => {

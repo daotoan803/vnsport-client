@@ -27,8 +27,8 @@ ReactDOM.render(
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={DateAdapter} locale={viLocale}>
           <BrowserRouter>
-            <SocketContextProvider>
-              <AuthContextProvider>
+            <AuthContextProvider>
+              <SocketContextProvider>
                 <AlertContextProvider>
                   <ModalContextProvider>
                     <SideBarContextProvider>
@@ -36,8 +36,8 @@ ReactDOM.render(
                     </SideBarContextProvider>
                   </ModalContextProvider>
                 </AlertContextProvider>
-              </AuthContextProvider>
-            </SocketContextProvider>
+              </SocketContextProvider>
+            </AuthContextProvider>
           </BrowserRouter>
         </LocalizationProvider>
       </ThemeProvider>

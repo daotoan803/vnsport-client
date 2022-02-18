@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import categoryApi from '../../../../apis/category';
+import categoryApi from '../../../../apis/categoryApi';
 
 import { Box, IconButton, Collapse, List } from '@mui/material';
 

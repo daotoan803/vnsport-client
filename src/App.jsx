@@ -1,6 +1,4 @@
 import React, { useContext, lazy, Suspense } from 'react';
-import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 
@@ -18,28 +16,21 @@ const LoginModal = lazy(() => import('./components/modal/LoginModal'));
 const SignupModal = lazy(() => import('./components/modal/SignupModal'));
 const ProductDetailPage = lazy(() => import('./pages/shop/ProductDetailPage'));
 const ProductsPage = lazy(() => import('./pages/shop/ProductsPage'));
+import BackdropSpinner from './components/suspend_fallback/BackdropSpinner';
 
 const App = () => {
   const modalContext = useContext(ModalContext);
   const sideBarContext = useContext(SideBarContext);
 
-  const fallback = (
-    <Backdrop
-      sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-      open={true}>
-      <CircularProgress color="inherit" />
-    </Backdrop>
-  );
-
   return (
     <>
       {modalContext.signupModalIsOpen && (
-        <Suspense fallback={fallback}>
+        <Suspense fallback={<BackdropSpinner />}>
           <SignupModal />
         </Suspense>
       )}
       {modalContext.loginModalIsOpen && (
-        <Suspense fallback={fallback}>
+        <Suspense fallback={<BackdropSpinner />}>
           <LoginModal />
         </Suspense>
       )}
@@ -57,7 +48,7 @@ const App = () => {
               path="/products/:categoryGroupCode"
               exact
               element={
-                <Suspense fallback={fallback}>
+                <Suspense fallback={<BackdropSpinner />}>
                   <ProductsPage />
                 </Suspense>
               }

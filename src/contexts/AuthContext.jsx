@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect } from 'react';
-import auth from './../apis/auth';
+import React, { createContext, useState } from 'react';
+import auth from '../apis/authApi';
 
 const AuthContext = createContext({
   isLoggedIn: false,
@@ -13,14 +13,9 @@ const AuthContext = createContext({
 export default AuthContext;
 
 export const AuthContextProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [role, setRole] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(auth.isLoggedIn());
+  const [role, setRole] = useState(auth.getRole());
   const [token, setToken] = useState(auth.getToken());
-
-  useEffect(() => {
-    setIsLoggedIn(auth.isLoggedIn());
-    setRole(auth.getRole());
-  }, []);
 
   const toggleLoggedIn = () => {
     setIsLoggedIn(!isLoggedIn);

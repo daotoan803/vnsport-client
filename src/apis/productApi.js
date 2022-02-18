@@ -1,4 +1,4 @@
-import auth from './auth';
+import auth from './authApi';
 import axios from 'axios';
 
 const product = (() => {
@@ -27,17 +27,6 @@ const product = (() => {
     return { status: res.status, data: res.data };
   };
 
-  // const getListOfProductPreview = async (page = 1, limit = 20) => {
-  //   let res = null;
-  //   try {
-  //     res = await axios.get(`/api/products?page=${page}&limit=${limit}`);
-  //   } catch (e) {
-  //     res = e.response;
-  //   }
-
-  //   return { status: res.status, data: res.data };
-  // };
-
   const getListOfProductPreview = async ({
     categoryGroup = null,
     brand = null,
@@ -48,40 +37,20 @@ const product = (() => {
     page,
     limit,
   }) => {
-    const brandFilterQuery = Number(brand) !== -1 ? `brand=${brand}` : '';
-    const minPriceQuery = minPrice ? `minPrice=${minPrice}` : '';
-    const maxPriceQuery = maxPrice ? `maxPrice=${maxPrice}` : '';
-    const sortByQuery = availableSortByOption[sortBy]
-      ? `sortBy=${availableSortByOption[sortBy]}`
-      : '';
-    const categoryGroupQuery = categoryGroup
-      ? `categoryGroup=${categoryGroup}`
-      : '';
-    const pageQuery = page ? `page=${page}` : '';
-    const limitQuery = limit ? `limit=${limit}` : '';
-
-    let categoryQuery = category ? `category=${category}` : '';
-    // if (!Number.isNaN(categoryQuery) && Number(category) < -1) {
-    //   categoryQuery = '';
-    // }
-
-    let queryOption = [
-      pageQuery,
-      limitQuery,
-      sortByQuery,
-      brandFilterQuery,
-      minPriceQuery,
-      maxPriceQuery,
-      categoryQuery,
-      categoryGroupQuery,
-    ]
-      .filter((option) => option !== '')
-      .join('&');
-
     let res = null;
     try {
-      const url = `/api/products?${queryOption}`;
-      res = await axios.get(url);
+      res = await axios.get(`/api/products`, {
+        params: {
+          categoryGroup,
+          brand,
+          minPrice,
+          maxPrice,
+          sortBy,
+          category,
+          page,
+          limit,
+        },
+      });
     } catch (e) {
       res = e.response;
     }

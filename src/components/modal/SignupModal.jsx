@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import ModalContext from '../../contexts/ModalContext';
-import authApi from '../../apis/auth';
+import authApi from '../../apis/authApi';
 import AuthContext from './../../contexts/AuthContext';
 import DatePicker from '@mui/lab/DatePicker';
 

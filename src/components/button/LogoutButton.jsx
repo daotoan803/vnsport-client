@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Button from '@mui/material/Button';
 import LogoutIcon from '@mui/icons-material/Logout';
-import authApi from './../../apis/auth';
+import authApi from '../../apis/authApi';
 import AuthContext from './../../contexts/AuthContext';
 import AlertContext from './../../contexts/AlertContext';
 

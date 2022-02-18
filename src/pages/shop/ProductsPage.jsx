@@ -19,10 +19,10 @@ import {
   Typography,
 } from '@mui/material';
 
-import productApi from '../../apis/product';
-import brandApi from '../../apis/brand';
+import productApi from '../../apis/productApi';
+import brandApi from '../../apis/brandApi';
 import ProductList from '../../components/products/ProductList';
-import categoryApi from '../../apis/category';
+import categoryApi from '../../apis/categoryApi';
 import FilterRadioGroup from './../../components/filter/FilterRadioGroup';
 
 const sortByOptions = [
