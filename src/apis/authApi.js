@@ -18,6 +18,10 @@ const auth = (() => {
     localStorage.setItem('token', newToken);
   };
 
+  const storeUser = (user) => {
+    localStorage.setItem('user', JSON.stringify(user));
+  };
+
   const getRole = () => role;
   const getToken = () => token;
 
@@ -31,6 +35,7 @@ const auth = (() => {
 
     if (status === 200) {
       storeToken(data.token);
+      storeUser(data.user);
       if (data.role) {
         localStorage.setItem('role', data.role);
       }
@@ -66,6 +71,7 @@ const auth = (() => {
     token = null;
     localStorage.removeItem('token');
     localStorage.removeItem('role');
+    localStorage.removeItem('user');
   };
 
   const getAxiosAuthorizationConfig = () => {

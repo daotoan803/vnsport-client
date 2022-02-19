@@ -105,7 +105,6 @@ const SignupModal = () => {
     }
     if (res.status === 400) {
       setSignupErr('Đăng ký không thành công');
-      console.log(res.data);
       return;
     }
 

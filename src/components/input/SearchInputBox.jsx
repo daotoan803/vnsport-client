@@ -14,7 +14,7 @@ const SearchInputBox = ({ value, onChange, onSearchClick, label = '' }) => {
         value={value}
         onChange={onChange}
       />
-      <IconButton size="large" color="primary" onSearchClick={onSearchClick}>
+      <IconButton size="large" color="primary" onClick={onSearchClick}>
         <SearchIcon fontSize="medium" />
       </IconButton>
     </Box>

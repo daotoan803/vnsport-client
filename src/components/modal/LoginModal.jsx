@@ -41,16 +41,15 @@ const LoginModal = () => {
   const login = async (e) => {
     e.preventDefault();
     if (loading) return;
+
     setLoading(true);
     const res = await authApi.logIn(email, password);
     setLoading(false);
+
     if (res.status === 200) {
-      authContext.toggleLoggedIn();
-      authContext.setToken(res.data.token);
+      authContext.onLoginSuccess(res.data);
+
       modalContext.toggleLoginModal();
-      if (res.role !== '') {
-        authContext.setRole(res.role);
-      }
       alertContext.showSuccessAlert('Đăng nhập thành công');
       return;
     }
@@ -76,12 +75,22 @@ const LoginModal = () => {
                   label="Email"
                   variant="standard"
                   onChange={(e) => setEmail(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      login(e);
+                    }
+                  }}
                 />
                 <TextField
                   label="Mật khẩu"
                   variant="standard"
                   type="password"
                   onChange={(e) => setPassword(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      login(e);
+                    }
+                  }}
                 />
                 <Box sx={{ textAlign: 'center', pt: 2 }}>
                   {loginError && (

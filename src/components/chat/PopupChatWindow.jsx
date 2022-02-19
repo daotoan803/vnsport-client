@@ -3,7 +3,6 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Collapse, Box, Typography, Paper, IconButton } from '@mui/material';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import MessageInputBox from './MessageInputBox';
 import SocketContext from './../../contexts/SocketContext';
 import AuthContext from './../../contexts/AuthContext';
 import MessageIcon from '@mui/icons-material/Message';
@@ -13,16 +12,25 @@ import CenteredSpinner from './../suspend_fallback/CenteredSpinner';
 import ToggleSignupModalButton from './../button/ToggleSignupModalButton';
 import ToggleLoginModalButton from './../button/ToggleLoginModalButton';
 import chatApi from './../../apis/chatApi';
+import ChatInputBox from './../input/ChatInputBox';
 
 const PopupChatWindow = () => {
   const [isExpand, setIsExpand] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState(false);
   const [messages, setMessages] = useState([]);
-  const [page, setPage] = useState([]);
+  const [page, setPage] = useState(1);
+
   const MESSAGE_LIMIT = 15;
 
   const { chatSocket } = useContext(SocketContext);
   const authContext = useContext(AuthContext);
+
+  useEffect(() => {
+    if (!authContext.isLoggedIn) {
+      setMessages([]);
+      setPage(1);
+    }
+  }, [authContext.isLoggedIn]);
 
   useEffect(() => {
     if (!isExpand || !authContext.isLoggedIn || !chatSocket) return;
@@ -32,7 +40,13 @@ const PopupChatWindow = () => {
     setLoadingMessage(true);
     chatApi.fetchChat(page, MESSAGE_LIMIT).then((res) => {
       if (res.status === 200) {
-        setMessages(res.data);
+        console.log(authContext.user);
+        setMessages(
+          res.data.messages.messages.map((message) => {
+            message.isSender = message.userId === authContext.user.id;
+            return message;
+          })
+        );
         setLoadingMessage(false);
       }
     });
@@ -42,7 +56,11 @@ const PopupChatWindow = () => {
   const sendNewMessage = (newMessage) => {
     if (newMessage.trim() === '') return;
     if (!authContext.isLoggedIn && !chatSocket) return;
-    chatSocket.emit('sendMessage', {});
+
+    chatSocket.emit('send-message', newMessage, (sentMessage) => {
+      sentMessage.isSender = true;
+      setMessages((prev) => [sentMessage, ...prev]);
+    });
   };
 
   const togglePopupChatWindow = () => {
@@ -113,11 +131,15 @@ const PopupChatWindow = () => {
           <>
             <Box sx={{ flexGrow: 1, height: '45vh', overflow: 'auto', px: 1 }}>
               <React.Suspense fallback={<CenteredSpinner />}>
-                {loadingMessage && <Typography align='center'>Loading ...</Typography>}
-                <MessageList />
+                {loadingMessage && (
+                  <Typography align="center">Loading ...</Typography>
+                )}
+                <MessageList messages={messages} />
               </React.Suspense>
             </Box>
-            <MessageInputBox sendNewMessage={sendNewMessage} />
+            <Paper elevation={2}>
+              <ChatInputBox onSendClick={sendNewMessage} />
+            </Paper>
           </>
         )}
         {!authContext.isLoggedIn && (

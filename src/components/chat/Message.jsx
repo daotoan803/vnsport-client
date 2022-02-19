@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Box, Typography } from '@mui/material';
 
-const Message = ({ isSender, position, message }) => {
+const Message = ({ isSender, position, message, sender }) => {
   let messageStyleBaseOnPosition = {};
   if (position === 'top') {
     messageStyleBaseOnPosition = {
@@ -34,31 +34,45 @@ const Message = ({ isSender, position, message }) => {
   }
 
   return (
-    <Box
-      sx={{
-        py: 2,
-        borderRadius: '1rem',
-        my: 1,
-        fontWeight: 500,
-        maxWidth: '60%',
-        border: '0.5px solid #999',
+    <>
+      <Box
+        sx={{
+          ...(isSender
+            ? { alignSelf: 'flex-end' }
+            : { alignSelf: 'flex-start' }),
+          maxWidth: '60%',
+        }}>
+        {(position === 'top' || !position) && (
+          <Typography align={isSender ? 'right' : 'left'} variant="body2">
+            {isSender ? 'You' : sender}
+          </Typography>
+        )}
+        <Box
+          sx={{
+            py: 2,
+            borderRadius: '1rem',
+            my: 1,
+            fontWeight: 500,
+            maxWidth: '100%',
+            border: '0.5px solid #999',
 
-        ...(isSender
-          ? {
-              bgcolor: 'primary.main',
-              color: 'primary.contrastText',
-              border: '0.5px solid #fff',
-              alignSelf: 'flex-end',
-              textAlign: 'end',
-              pr: '0.75rem',
-              pl: '1rem',
-            }
-          : { pl: '0.75rem', pr: '1rem', alignSelf: 'flex-start' }),
+            ...(isSender
+              ? {
+                  bgcolor: 'primary.main',
+                  color: 'primary.contrastText',
+                  border: '0.5px solid #fff',
+                  textAlign: 'end',
+                  pr: '0.75rem',
+                  pl: '1rem',
+                }
+              : { pl: '0.75rem', pr: '1rem', alignSelf: 'flex-start' }),
 
-        ...messageStyleBaseOnPosition,
-      }}>
-      <Typography>{message}</Typography>
-    </Box>
+            ...messageStyleBaseOnPosition,
+          }}>
+          <Typography>{message}</Typography>
+        </Box>
+      </Box>
+    </>
   );
 };
 

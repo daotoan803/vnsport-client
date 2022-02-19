@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import Button from '@mui/material/Button';
 import LogoutIcon from '@mui/icons-material/Logout';
-import authApi from '../../apis/authApi';
 import AuthContext from './../../contexts/AuthContext';
 import AlertContext from './../../contexts/AlertContext';
 
@@ -10,9 +9,7 @@ const LogoutButton = () => {
   const alertContext = useContext(AlertContext);
 
   const logout = () => {
-    authApi.logout();
-    authContext.toggleLoggedIn();
-    authContext.setRole('');
+    authContext.onLogout();
     alertContext.showSuccessAlert('Đăng xuất thành công');
   };
 

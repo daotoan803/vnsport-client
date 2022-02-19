@@ -2,15 +2,29 @@ import axios from 'axios';
 import authApi from './authApi';
 
 const chatApi = (() => {
-  const fetchChat = async (page, limit) => {
-    if (!authApi.isLoggedIn() || !authApi.getToken()) {
-      throw new Error("Can't fetch chat when not logged in");
+  const fetchUserListByNewestChat = async (page, limit) => {
+    let res = null;
+    try {
+      res = await axios.get('/api/admin/chat/users', {
+        params: { page, limit },
+        ...authApi.getAxiosAuthorizationConfig(),
+      });
+    } catch (e) {
+      if (e.response) {
+        res = e.response;
+        return;
+      }
+      throw e;
     }
 
-    const res = await axios.get('/api/chat', {
+    return res;
+  };
+
+  const fetchChat = async (page, limit) => {
+    const res = await axios.get('/api/user/chat', {
       params: {
-        ...(page ? { page } : {}),
-        ...(limit ? { limit } : {}),
+        page,
+        limit,
       },
       ...authApi.getAxiosAuthorizationConfig(),
     });
@@ -18,7 +32,7 @@ const chatApi = (() => {
     return res;
   };
 
-  return { fetchChat };
+  return { fetchChat, fetchUserListByNewestChat };
 })();
 
 export default chatApi;
