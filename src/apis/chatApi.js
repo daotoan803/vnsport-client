@@ -32,7 +32,26 @@ const chatApi = (() => {
     return res;
   };
 
-  return { fetchChat, fetchUserListByNewestChat };
+  const fetchChatByRoomId = async ({ page, limit, roomId }) => {
+    let res = null;
+
+    try {
+      res = await axios.get(`/api/admin/chat/room/${roomId}`, {
+        params: {
+          page,
+          limit,
+        },
+        ...authApi.getAxiosAuthorizationConfig(),
+      });
+    } catch (e) {
+      if (e.response) {
+        res = e.response;
+      } else throw e;
+    }
+    return res;
+  };
+
+  return { fetchChat, fetchUserListByNewestChat, fetchChatByRoomId };
 })();
 
 export default chatApi;

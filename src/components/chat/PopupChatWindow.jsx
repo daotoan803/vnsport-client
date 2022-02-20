@@ -29,6 +29,10 @@ const PopupChatWindow = () => {
     if (!authContext.isLoggedIn) {
       setMessages([]);
       setPage(1);
+    } else {
+      chatSocket.on('new-message', (data) => {
+        setMessages((prev) => [data, ...prev]);
+      });
     }
   }, [authContext.isLoggedIn]);
 
@@ -40,7 +44,6 @@ const PopupChatWindow = () => {
     setLoadingMessage(true);
     chatApi.fetchChat(page, MESSAGE_LIMIT).then((res) => {
       if (res.status === 200) {
-        console.log(authContext.user);
         setMessages(
           res.data.messages.messages.map((message) => {
             message.isSender = message.userId === authContext.user.id;
@@ -50,14 +53,14 @@ const PopupChatWindow = () => {
         setLoadingMessage(false);
       }
     });
-    chatSocket.emit('join-support-chat');
+    chatSocket.emit('join-support-room');
   }, [isExpand]);
 
   const sendNewMessage = (newMessage) => {
     if (newMessage.trim() === '') return;
     if (!authContext.isLoggedIn && !chatSocket) return;
 
-    chatSocket.emit('send-message', newMessage, (sentMessage) => {
+    chatSocket.emit('send-message', { message: newMessage }, (sentMessage) => {
       sentMessage.isSender = true;
       setMessages((prev) => [sentMessage, ...prev]);
     });

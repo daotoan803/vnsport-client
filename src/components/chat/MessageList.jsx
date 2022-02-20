@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import { Typography, Box } from '@mui/material';
 
 import Message from './Message';
+import AuthContext from './../../contexts/AuthContext';
 
 const MessageList = ({ messages }) => {
-  console.log(messages);
+  const authContext = useContext(AuthContext);
 
   return (
     <Box
@@ -41,8 +42,10 @@ const MessageList = ({ messages }) => {
         return (
           <Message
             key={message.id}
-            sender={message.username}
-            isSender={message.isSender}
+            sender={message.user.name}
+            isSender={
+              (message.isSender = message.userId === authContext.user.id)
+            }
             position={message.position}
             message={message.message}
           />
