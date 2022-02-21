@@ -28,6 +28,7 @@ const MessageList = ({ messages }) => {
             </Typography>
           );
         }
+
         const prevMessage = messages[i - 1];
         const nextMessage = messages[i + 1];
 
@@ -47,6 +48,7 @@ const MessageList = ({ messages }) => {
             isSender={
               (message.isSender = message.userId === authContext.user.id)
             }
+            type={message.messageType}
             position={message.position}
             message={message.message}
           />

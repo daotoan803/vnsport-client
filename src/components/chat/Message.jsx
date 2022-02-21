@@ -1,8 +1,9 @@
 import React from 'react';
 
 import { Box, Typography } from '@mui/material';
+import OpenableImage from './../image/OpenableImage';
 
-const Message = ({ isSender, position, message, sender }) => {
+const Message = ({ isSender, position, message, sender, type }) => {
   let messageStyleBaseOnPosition = {};
   if (position === 'top') {
     messageStyleBaseOnPosition = {
@@ -69,7 +70,12 @@ const Message = ({ isSender, position, message, sender }) => {
 
             ...messageStyleBaseOnPosition,
           }}>
-          <Typography>{message}</Typography>
+          {type === 'image' && (
+            <Box sx={{ width: '100%' }}>
+              <OpenableImage src={message} width="100%" />
+            </Box>
+          )}
+          {type === 'message' && <Typography>{message}</Typography>}
         </Box>
       </Box>
     </>

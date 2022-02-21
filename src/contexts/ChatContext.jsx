@@ -29,10 +29,9 @@ export const ChatContextProvider = ({ children }) => {
 
   const authContext = useContext(AuthContext);
 
-  const addNewMessage = (newMessage) => {
-    console.log('addNewMessage called');
+  const addNewMessage = (err, newMessage) => {
+    if (err) throw err;
     setMessages((prev) => {
-      console.log('setting new message : ', [newMessage, ...prev]);
       return [newMessage, ...prev];
     });
   };
@@ -91,10 +90,13 @@ export const ChatContextProvider = ({ children }) => {
     });
   }, [chatRoomId]);
 
-  const sendMessage = (message) => {
-    if (message.trim() === '') return;
+  const sendMessage = (message, images) => {
+    if (!images && message.trim() === '') return;
 
-    chatSocketApi.sendNewMessage({ message, chatRoomId }, addNewMessage);
+    chatSocketApi.sendNewMessage(
+      { message, images, chatRoomId },
+      addNewMessage
+    );
   };
 
   const setRoom = (newRoomId) => {

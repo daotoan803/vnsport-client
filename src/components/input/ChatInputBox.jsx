@@ -6,7 +6,7 @@ import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 
 const ChatInputBox = ({ onSendClick }) => {
   const [message, setMessage] = useState('');
-  const [selectedImages, setSelectedImages] = useState([]);
+  const [selectedImages, setSelectedImages] = useState({});
 
   const imageInputRef = useRef(null);
 
@@ -18,13 +18,13 @@ const ChatInputBox = ({ onSendClick }) => {
     const images = e.target.files;
     const uploadImages = {};
 
-    [...images].forEach((image) => {
-      if (uploadImages[image.name]) return;
+    [...images].forEach((imageFile) => {
+      if (uploadImages[imageFile.name]) return;
 
-      uploadImages[image.name] = {
-        url: URL.createObjectURL(image),
-        file: image,
-        name: image.name,
+      uploadImages[imageFile.name] = {
+        url: URL.createObjectURL(imageFile),
+        file: imageFile,
+        name: imageFile.name,
       };
     });
 
@@ -36,6 +36,29 @@ const ChatInputBox = ({ onSendClick }) => {
     delete tempImages[imageName];
 
     setSelectedImages(tempImages);
+  };
+
+  const sendMessage = () => {
+    if (Object.values(selectedImages).length > 0) {
+      const images = Object.values(selectedImages).map((image) => image.file);
+      console.log(images);
+
+      onSendClick(message, images);
+      setMessage('');
+      setSelectedImages({});
+      return;
+    }
+    onSendClick(message);
+    setMessage('');
+  };
+
+  const onPaste = (e) => {
+    console.log(e);
+
+    const files = e.clipboardData?.files;
+    console.log('files :: ', files);
+
+    if (files) onImageSelected({ target: { files: files } });
   };
 
   return (
@@ -75,7 +98,6 @@ const ChatInputBox = ({ onSendClick }) => {
           type="file"
           accept="image/*"
           hidden
-          multiple
           onChange={onImageSelected}
         />
         <IconButton size="medium" color="primary" onClick={selectImage}>
@@ -86,6 +108,7 @@ const ChatInputBox = ({ onSendClick }) => {
           label="Tin nhắn"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onPaste={onPaste}
           onKeyPress={(e) => {
             if (e.key === 'Enter') {
               onSendClick(message);
@@ -93,13 +116,7 @@ const ChatInputBox = ({ onSendClick }) => {
             }
           }}
         />
-        <IconButton
-          size="medium"
-          color="primary"
-          onClick={() => {
-            onSendClick(message);
-            setMessage('');
-          }}>
+        <IconButton size="medium" color="primary" onClick={sendMessage}>
           <SendIcon fontSize="medium" />
         </IconButton>
       </Box>

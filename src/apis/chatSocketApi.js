@@ -25,8 +25,25 @@ const chatSocketApi = (() => {
     chatSocket.on('new-message', cb);
   };
 
-  const sendNewMessage = (data, cb) => {
-    chatSocket.emit('send-message', data, cb);
+  const sendNewMessage = ({ message, chatRoomId, images }, cb) => {
+    if (images?.length > 0) {
+      images.forEach(async (image) => {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const bytes = new Uint8Array(this.result);
+          console.log(bytes);
+          chatSocket.emit(
+            'send-image-message',
+            { imageBuffer: bytes, chatRoomId },
+            cb
+          );
+        };
+        reader.readAsArrayBuffer(image);
+      });
+    }
+
+    if (message.trim() === '') return;
+    chatSocket.emit('send-message', { message, chatRoomId }, cb);
   };
 
   const subscribeAllChatRoomNewMessages = (cb) => {
