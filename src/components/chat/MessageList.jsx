@@ -14,6 +14,7 @@ const MessageList = ({ messages }) => {
       sx={{
         flexGrow: 1,
         overflow: 'auto',
+        overflowX: 'hidden',
         px: '0.75rem',
         display: 'flex',
         flexDirection: 'column-reverse',

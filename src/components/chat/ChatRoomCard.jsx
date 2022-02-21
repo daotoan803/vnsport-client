@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Card, Grid, Avatar, Typography } from '@mui/material';
+import { Card, Grid, Avatar, Typography, Badge } from '@mui/material';
 
 function stringToColor(string) {
   let hash = 0;
@@ -37,7 +37,7 @@ function stringAvatar(name) {
   };
 }
 
-const UserChatHistoryCard = ({ user, message, isActive, onClick }) => {
+const ChatRoomCard = ({ user, message, isActive, onClick, isNew }) => {
   return (
     <Grid
       onClick={onClick}
@@ -51,16 +51,21 @@ const UserChatHistoryCard = ({ user, message, isActive, onClick }) => {
             }),
       }}>
       <Grid item xs={2.5} container justifyContent="center" alignItems="center">
-        {user.avatarUrl && (
-          <Avatar
-            sx={{ width: 56, height: 56 }}
-            alt={user.name}
-            src={user.avatarUrl}
-          />
-        )}
-        {!user.avatarUrl && (
-          <Avatar sx={{ width: 56, height: 56 }} {...stringAvatar(user.name)} />
-        )}
+        <Badge color="error" variant="dot" invisible={isActive ? true : !isNew}>
+          {user.avatarUrl && (
+            <Avatar
+              sx={{ width: 56, height: 56 }}
+              alt={user.name}
+              src={user.avatarUrl}
+            />
+          )}
+          {!user.avatarUrl && (
+            <Avatar
+              sx={{ width: 56, height: 56 }}
+              {...stringAvatar(user.name)}
+            />
+          )}
+        </Badge>
       </Grid>
       <Grid item xs py={1}>
         <Typography variant="h6">{user.name}</Typography>
@@ -70,4 +75,4 @@ const UserChatHistoryCard = ({ user, message, isActive, onClick }) => {
   );
 };
 
-export default UserChatHistoryCard;
+export default ChatRoomCard;

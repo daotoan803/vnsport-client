@@ -8,28 +8,28 @@ const Message = ({ isSender, position, message, sender }) => {
     messageStyleBaseOnPosition = {
       mb: 0,
       ...(isSender
-        ? { borderBottomRightRadius: '0.15rem' }
-        : { borderBottomLeftRadius: '0.15rem' }),
+        ? { borderBottomRightRadius: '0.25rem' }
+        : { borderBottomLeftRadius: '0.25rem' }),
     };
   } else if (position === 'middle') {
     messageStyleBaseOnPosition = {
       my: 0,
       ...(isSender
         ? {
-            borderTopRightRadius: '0.15rem',
-            borderBottomRightRadius: '0.15rem',
+            borderTopRightRadius: '0.25rem',
+            borderBottomRightRadius: '0.25rem',
           }
         : {
-            borderTopLeftRadius: '0.15rem',
-            borderBottomLeftRadius: '0.15rem',
+            borderTopLeftRadius: '0.25rem',
+            borderBottomLeftRadius: '0.25rem',
           }),
     };
   } else if (position === 'bottom') {
     messageStyleBaseOnPosition = {
       mt: 0,
       ...(isSender
-        ? { borderTopRightRadius: '0.15rem' }
-        : { borderTopLeftRadius: '0.15rem' }),
+        ? { borderTopRightRadius: '0.25rem' }
+        : { borderTopLeftRadius: '0.25rem' }),
     };
   }
 
@@ -49,7 +49,7 @@ const Message = ({ isSender, position, message, sender }) => {
         )}
         <Box
           sx={{
-            py: 2,
+            py: 1,
             borderRadius: '1rem',
             my: 1,
             fontWeight: 500,

@@ -2,7 +2,7 @@ import axios from 'axios';
 import authApi from './authApi';
 
 const chatApi = (() => {
-  const fetchUserListByNewestChat = async (page, limit) => {
+  const fetchChatRoomList = async (page, limit) => {
     let res = null;
     try {
       res = await axios.get('/api/admin/chat/users', {
@@ -51,7 +51,11 @@ const chatApi = (() => {
     return res;
   };
 
-  return { fetchChat, fetchUserListByNewestChat, fetchChatByRoomId };
+  return {
+    fetchChat,
+    fetchChatRoomList,
+    fetchChatByRoomId,
+  };
 })();
 
 export default chatApi;

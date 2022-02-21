@@ -1,9 +1,15 @@
 import React, { useState, useContext, useEffect } from 'react';
 
-import { Collapse, Box, Typography, Paper, IconButton } from '@mui/material';
+import {
+  Collapse,
+  Box,
+  Typography,
+  Paper,
+  IconButton,
+  Badge,
+} from '@mui/material';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import SocketContext from './../../contexts/SocketContext';
 import AuthContext from './../../contexts/AuthContext';
 import MessageIcon from '@mui/icons-material/Message';
 
@@ -11,70 +17,33 @@ const MessageList = React.lazy(() => import('./MessageList'));
 import CenteredSpinner from './../suspend_fallback/CenteredSpinner';
 import ToggleSignupModalButton from './../button/ToggleSignupModalButton';
 import ToggleLoginModalButton from './../button/ToggleLoginModalButton';
-import chatApi from './../../apis/chatApi';
 import ChatInputBox from './../input/ChatInputBox';
+import ChatContext from './../../contexts/ChatContext';
 
 const PopupChatWindow = () => {
   const [isExpand, setIsExpand] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [page, setPage] = useState(1);
+  const [haveNewMessage, setHaveNewMessage] = useState(false);
 
-  const MESSAGE_LIMIT = 15;
-
-  const { chatSocket } = useContext(SocketContext);
   const authContext = useContext(AuthContext);
 
-  useEffect(() => {
-    if (!authContext.isLoggedIn) {
-      setMessages([]);
-      setPage(1);
-    } else {
-      chatSocket.on('new-message', (data) => {
-        setMessages((prev) => [data, ...prev]);
-      });
-    }
-  }, [authContext.isLoggedIn]);
-
-  useEffect(() => {
-    if (!isExpand || !authContext.isLoggedIn || !chatSocket) return;
-
-    if (messages.length !== 0) return;
-
-    setLoadingMessage(true);
-    chatApi.fetchChat(page, MESSAGE_LIMIT).then((res) => {
-      if (res.status === 200) {
-        setMessages(
-          res.data.messages.messages.map((message) => {
-            message.isSender = message.userId === authContext.user.id;
-            return message;
-          })
-        );
-        setLoadingMessage(false);
-      }
-    });
-    chatSocket.emit('join-support-room');
-  }, [isExpand]);
-
-  const sendNewMessage = (newMessage) => {
-    if (newMessage.trim() === '') return;
-    if (!authContext.isLoggedIn && !chatSocket) return;
-
-    chatSocket.emit('send-message', { message: newMessage }, (sentMessage) => {
-      sentMessage.isSender = true;
-      setMessages((prev) => [sentMessage, ...prev]);
-    });
-  };
+  const { messages, sendMessage, loadingMessage } = useContext(ChatContext);
 
   const togglePopupChatWindow = () => {
     setIsExpand(!isExpand);
   };
 
+  useEffect(() => {
+    setHaveNewMessage(true);
+  }, [messages.length]);
+
   return (
     <>
       {!isExpand && (
         <IconButton
-          onClick={togglePopupChatWindow}
+          onClick={() => {
+            togglePopupChatWindow();
+            setHaveNewMessage(false);
+          }}
           sx={{
             position: 'fixed',
             bottom: 20,
@@ -86,7 +55,12 @@ const PopupChatWindow = () => {
             },
           }}
           size="large">
-          <MessageIcon fontSize="large" />
+          <Badge
+            color="error"
+            variant="dot"
+            invisible={isExpand ? true : !haveNewMessage}>
+            <MessageIcon fontSize="large" />
+          </Badge>
         </IconButton>
       )}
       <Collapse
@@ -132,7 +106,13 @@ const PopupChatWindow = () => {
         </Box>
         {authContext.isLoggedIn && (
           <>
-            <Box sx={{ flexGrow: 1, height: '45vh', overflow: 'auto', px: 1 }}>
+            <Box
+              sx={{
+                height: '50vh',
+                px: 1,
+                display: 'flex',
+                flexDirection: 'column-reverse',
+              }}>
               <React.Suspense fallback={<CenteredSpinner />}>
                 {loadingMessage && (
                   <Typography align="center">Loading ...</Typography>
@@ -141,7 +121,7 @@ const PopupChatWindow = () => {
               </React.Suspense>
             </Box>
             <Paper elevation={2}>
-              <ChatInputBox onSendClick={sendNewMessage} />
+              <ChatInputBox onSendClick={sendMessage} />
             </Paper>
           </>
         )}
