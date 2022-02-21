@@ -29,8 +29,7 @@ export const ChatContextProvider = ({ children }) => {
 
   const authContext = useContext(AuthContext);
 
-  const addNewMessage = (err, newMessage) => {
-    if (err) throw err;
+  const addNewMessage = (newMessage) => {
     setMessages((prev) => {
       return [newMessage, ...prev];
     });
@@ -95,7 +94,10 @@ export const ChatContextProvider = ({ children }) => {
 
     chatSocketApi.sendNewMessage(
       { message, images, chatRoomId },
-      addNewMessage
+      (err, data) => {
+        if (err) throw err;
+        addNewMessage(data);
+      }
     );
   };
 
