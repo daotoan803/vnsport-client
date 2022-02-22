@@ -75,7 +75,11 @@ const Message = ({ isSender, position, message, sender, type }) => {
               <OpenableImage src={message} width="100%" />
             </Box>
           )}
-          {type === 'message' && <Typography>{message}</Typography>}
+          {type === 'message' && (
+            <Typography sx={{ overflowWrap: 'break-word' }}>
+              {message}
+            </Typography>
+          )}
         </Box>
       </Box>
     </>

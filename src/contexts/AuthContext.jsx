@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import auth from '../apis/authApi';
 
 const AuthContext = createContext({
@@ -34,6 +34,15 @@ export const AuthContextProvider = ({ children }) => {
     setRole(null);
     setUser(null);
   };
+  
+  useEffect(() => {
+    auth.validateToken().then((res) => {
+      if (res.status === 401) {
+        onLogout();
+        auth.logout();
+      }
+    });
+  }, []);
 
   return (
     <AuthContext.Provider

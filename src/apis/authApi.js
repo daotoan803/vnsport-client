@@ -67,6 +67,20 @@ const auth = (() => {
     return { status, data };
   };
 
+  const validateToken = async () => {
+    if (token === null) return;
+
+    let res = null;
+    try {
+      res = await axios.post('/api/user/validateToken');
+    } catch (e) {
+      if (!e.response) throw e;
+      res = e.response;
+    }
+
+    return res;
+  };
+
   const logout = () => {
     token = null;
     localStorage.removeItem('token');
@@ -87,6 +101,7 @@ const auth = (() => {
     logout,
     getRole,
     getAxiosAuthorizationConfig,
+    validateToken,
     availableRole,
     getToken,
   };

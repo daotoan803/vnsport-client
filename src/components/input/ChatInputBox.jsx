@@ -107,7 +107,11 @@ const ChatInputBox = ({ onSendClick }) => {
           sx={{ flexGrow: 1 }}
           label="Tin nhắn"
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          multiline
+          onChange={(e) => {
+            if (e.target.value.length > 254) return;
+            setMessage(e.target.value);
+          }}
           onPaste={onPaste}
           onKeyPress={(e) => {
             if (e.key === 'Enter') {

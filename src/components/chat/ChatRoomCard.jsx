@@ -1,6 +1,8 @@
 import React from 'react';
 
 import { Card, Grid, Avatar, Typography, Badge } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 function stringToColor(string) {
   let hash = 0;
@@ -38,6 +40,9 @@ function stringAvatar(name) {
 }
 
 const ChatRoomCard = ({ user, message, isActive, onClick, isNew }) => {
+  const theme = useTheme();
+  const isLessThanLg = useMediaQuery(theme.breakpoints.down('lg'));
+
   return (
     <Grid
       onClick={onClick}
@@ -50,7 +55,7 @@ const ChatRoomCard = ({ user, message, isActive, onClick, isNew }) => {
               ':hover': { bgcolor: '#e7e7e7' },
             }),
       }}>
-      <Grid item xs={2.5} container justifyContent="center" alignItems="center">
+      <Grid item xs={12} lg={2.5} container justifyContent="center" alignItems="center">
         <Badge color="error" variant="dot" invisible={isActive ? true : !isNew}>
           {user.avatarUrl && (
             <Avatar
@@ -67,9 +72,30 @@ const ChatRoomCard = ({ user, message, isActive, onClick, isNew }) => {
           )}
         </Badge>
       </Grid>
-      <Grid item xs py={1}>
-        <Typography variant="h6">{user.name}</Typography>
-        <Typography variant="body2">{message.message}</Typography>
+      <Grid
+        item
+        xs={0}
+        lg={12 - 2.5}
+        py={1}
+        sx={{ height: '80px', ...(isLessThanLg ? { display: 'none' } : {}) }}>
+        <Typography
+          variant="h6"
+          sx={{
+            width: '100%',
+            overflowWrap: 'break-word',
+            textOverflow: 'ellipsis',
+          }}>
+          {user.name}
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{
+            width: '100%',
+            overflowWrap: 'break-word',
+            textOverflow: 'ellipsis',
+          }}>
+          {message.message}
+        </Typography>
       </Grid>
     </Grid>
   );
