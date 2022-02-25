@@ -68,7 +68,7 @@ const auth = (() => {
   };
 
   const validateToken = async () => {
-    if (token === null) return;
+    if (token === null) return {status : 401};
 
     let res = null;
     try {

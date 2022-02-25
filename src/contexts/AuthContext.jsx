@@ -34,9 +34,10 @@ export const AuthContextProvider = ({ children }) => {
     setRole(null);
     setUser(null);
   };
-  
+
   useEffect(() => {
     auth.validateToken().then((res) => {
+      console.log(res);
       if (res.status === 401) {
         onLogout();
         auth.logout();

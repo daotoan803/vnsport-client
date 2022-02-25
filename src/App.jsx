@@ -12,6 +12,8 @@ const AdminChatPage = lazy(() => import('./pages/admin/AdminChatPage'));
 const ShopHomePage = lazy(() => import('./pages/shop/ShopIndexPage'));
 const AdminIndexPage = lazy(() => import('./pages/admin/AdminIndexPage'));
 import ImageModal from './components/modal/ImageModal';
+import AdminProductPage from './pages/admin/AdminProductPage';
+import AddProductPanel from './pages/admin/product/AddProductPanel';
 
 const App = () => {
   const sideBarContext = useContext(SideBarContext);
@@ -23,7 +25,7 @@ const App = () => {
         <ImageModal />
         <Routes>
           <Route
-            path="/admin/chat"
+            path="admin/chat"
             element={
               <Suspense fallback={<BackdropSpinner />}>
                 <AdminChatPage />
@@ -31,12 +33,16 @@ const App = () => {
             }
           />
           <Route
-            path="/admin"
+            path="admin"
             element={
               <Suspense fallback={<BackdropSpinner />}>
                 <AdminIndexPage />
               </Suspense>
-            }></Route>
+            }>
+            <Route path="products" element={<AdminProductPage />}>
+              <Route path="new" element={<AddProductPanel />} />
+            </Route>
+          </Route>
           <Route
             path="/*"
             element={

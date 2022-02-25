@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Box, IconButton, TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import ImageIcon from '@mui/icons-material/Image';
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
+import ImagePreviewContainer from './../image/ImagePreviewContainer';
 
 const ChatInputBox = ({ onSendClick }) => {
   const [message, setMessage] = useState('');
@@ -67,22 +67,10 @@ const ChatInputBox = ({ onSendClick }) => {
         <Box
           display="flex"
           sx={{ gap: 1, overflowX: 'auto', overflowY: 'hidden' }}>
-          {Object.values(selectedImages).map((image) => {
-            return (
-              <Box
-                sx={{ position: 'relative', height: '80px' }}
-                key={image.name}>
-                <img src={image.url} style={{ height: '100%' }} />
-                <IconButton
-                  size="small"
-                  sx={{ position: 'absolute', top: 1, right: 1 }}
-                  color="error"
-                  onClick={() => removeImage(image.name)}>
-                  <CancelRoundedIcon fontSize="medium" />
-                </IconButton>
-              </Box>
-            );
-          })}
+          <ImagePreviewContainer
+            images={Object.values(selectedImages)}
+            onRemoveImage={removeImage}
+          />
         </Box>
       )}
       <Box
