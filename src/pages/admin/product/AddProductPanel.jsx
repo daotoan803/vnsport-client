@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import brandApi from './../../../apis/brandApi';
 import categoryApi from './../../../apis/categoryApi';
+import ImagePreviewContainer from './../../../components/image/ImagePreviewContainer';
+import productApi from './../../../apis/productApi';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 import {
   Container,
@@ -40,23 +43,60 @@ const fetchCategoryOptions = async (setCategoryOptions) => {
   setCategoryOptions(categories);
 };
 
-const availableStates = [
-  { value: 'hidden', label: 'Ẩn' },
-  { value: 'outstock', label: 'Hết hàng' },
-  { value: 'available', label: 'Mở bán' },
-];
+const availableStates = {
+  hidden: { value: 'hidden', label: 'Ẩn' },
+  outStock: { value: 'outStock', label: 'Hết hàng' },
+  available: { value: 'available', label: 'Mở bán' },
+};
+
+const createImageObject = (file) => {
+  return {
+    url: URL.createObjectURL(file),
+    name: file.name,
+    file: file,
+  };
+};
+
+const titleIsValid = (title) => {
+  return (title.trim().length >= 4 && title.length < 100) || !title;
+};
+
+const priceIsValid = (price) => {
+  return price > 0 || !price;
+};
+
+const discountPriceIsValid = (price, discountPrice) => {
+  return (
+    (discountPrice > 0 && discountPrice <= price) ||
+    discountPrice === 0 ||
+    !discountPrice
+  );
+};
+
+const availableQuantityIsValid = (quantity) => {
+  return quantity >= 0 || !quantity;
+};
+
+const detailIsValid = (detail) => {
+  return detail.trim().length >= 1 || !detail;
+};
+
+const warrantyPeriodByDayIsValid = (warrantyPeriodByDay) => {
+  return warrantyPeriodByDay >= 0 || !warrantyPeriodByDay;
+};
 
 const AddProductPanel = () => {
   const [brandOptions, setBrandOptions] = useState([]);
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [title, setTitle] = useState('');
   const [detail, setDetail] = useState('');
-  const [price, setPrice] = useState(0);
-  const [discountPrice, setDiscountPrice] = useState(0);
-  const [availableQuantity, setAvailableQuantity] = useState(0);
-  const [state, setState] = useState('');
-  const [brandId, setBrandId] = useState(0);
-  const [categoryId, setCategoryId] = useState(0);
+  const [price, setPrice] = useState('');
+  const [discountPrice, setDiscountPrice] = useState('');
+  const [availableQuantity, setAvailableQuantity] = useState('');
+  const [warrantyPeriodByDay, setWarrantyPeriodByDay] = useState('');
+  const [state, setState] = useState(availableStates.available.value);
+  const [brandId, setBrandId] = useState('');
+  const [categoryId, setCategoryId] = useState('');
   const [images, setImages] = useState([]);
   const [mainImage, setMainImage] = useState(null);
 
@@ -65,28 +105,120 @@ const AddProductPanel = () => {
   const [priceErr, setPriceErr] = useState(false);
   const [discountPriceErr, setDiscountPriceErr] = useState(false);
   const [availableQuantityErr, setAvailableQuantityErr] = useState(false);
+  const [warrantyPeriodByDayErr, setWarrantyPeriodByDayErr] = useState(false);
+  const [haveErr, setHaveErr] = useState(false);
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchBrandOptions(setBrandOptions);
     fetchCategoryOptions(setCategoryOptions);
   }, []);
 
-  const fileInputRef = useRef(null);
-  const onImageSelect = (e) => {
+  useEffect(() => {
+    setTitleErr(!titleIsValid(title));
+  }, [title]);
+
+  useEffect(() => {
+    setPriceErr(!priceIsValid(price));
+    setDiscountPriceErr(!discountPriceIsValid(price, discountPrice));
+  }, [price, discountPrice]);
+
+  useEffect(() => {
+    setAvailableQuantityErr(!availableQuantityIsValid(availableQuantity));
+    if (availableQuantity === 0) {
+      setState(availableStates.outStock.value);
+    }
+  }, [availableQuantity]);
+
+  useEffect(() => {
+    setWarrantyPeriodByDayErr(!warrantyPeriodByDayIsValid(warrantyPeriodByDay));
+  }, [warrantyPeriodByDay]);
+
+  useEffect(() => {
+    setDetailErr(!detailIsValid(detail));
+  }, [detail]);
+
+  useEffect(() => {
+    setHaveErr(
+      titleErr ||
+        detailErr ||
+        priceErr ||
+        discountPriceErr ||
+        availableQuantityErr ||
+        warrantyPeriodByDayErr
+    );
+  }, [
+    titleErr,
+    detailErr,
+    priceErr,
+    discountPriceErr,
+    availableQuantityErr,
+    warrantyPeriodByDayErr,
+  ]);
+
+  const addProduct = async () => {
+    if (
+      haveErr ||
+      !title ||
+      !detail ||
+      !price ||
+      !availableQuantity ||
+      !warrantyPeriodByDay ||
+      !brandId ||
+      !categoryId ||
+      !mainImage
+    ) {
+      setHaveErr(true);
+      return;
+    }
+
+    setLoading(true);
+    const res = await productApi.addProduct({
+      title,
+      detail,
+      price,
+      discountPrice,
+      warrantyPeriodByDay,
+      availableQuantity,
+      state,
+      brandId,
+      categoryId,
+    });
+
+    setLoading(false);
+    if (res.status === 200) {
+      alert('Thêm sản phẩm thành công');
+    }
+  };
+
+  const mainImageInputRef = useRef(null);
+  const previewImagesInputRef = useRef(null);
+
+  const removePreviewImage = (imageName) => {
+    setImages((prev) => {
+      return prev.filter((image) => image.name !== imageName);
+    });
+  };
+
+  const onPreviewImageSelect = (e) => {
     const newImages = [];
 
     for (const file of e.target.files) {
-      newImages.push({
-        name: file.name,
-        file: file,
-        url: URL.createObjectURL(file),
-      });
+      const existedImage = images.find((image) => image.name === file.name);
+      if (existedImage) continue;
+      newImages.push(createImageObject(file));
     }
-    console.log(newImages);
 
     setImages((prevImages) => {
       return [...prevImages, ...newImages];
     });
+  };
+
+  const onMainImageSelect = (e) => {
+    const image = e.target.files[0];
+    console.log(createImageObject(image));
+    setMainImage(createImageObject(image));
   };
 
   return (
@@ -95,11 +227,16 @@ const AddProductPanel = () => {
         Thêm sản phẩm mới
       </Typography>
       <Grid container sx={{ py: 2 }} spacing={2}>
-        <Grid item xs={12}>
+        <Grid item xs={12} lg={6}>
           <TextField
             fullWidth
+            error={titleErr}
+            helperText="Từ 4 tới 100 ký tự"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => {
+              if (e.target.value.length > 100) return;
+              setTitle(e.target.value);
+            }}
             label="Tên sản phẩm"
             required
           />
@@ -108,54 +245,87 @@ const AddProductPanel = () => {
           <TextField
             fullWidth
             value={detail}
+            error={detailErr}
             onChange={(e) => setDetail(e.target.value)}
             label="Chi tiết sản phẩm"
             multiline
             required
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} lg={5}>
           <TextField
             fullWidth
             value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            error={priceErr}
+            onChange={(e) => {
+              if (e.target.value < 0) return setPrice(0);
+              setPrice(e.target.value);
+            }}
             label="Giá"
             type="number"
             required
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} lg={5}>
           <TextField
             fullWidth
+            error={discountPriceErr}
             value={discountPrice}
-            onChange={(e) => setDiscountPrice(e.target.value)}
+            onChange={(e) => {
+              if (e.target.value < 0) return setDiscountPrice(0);
+              setDiscountPrice(e.target.value);
+            }}
             label="Giá khuyến mãi"
+            helperText="Giá khuyến mãi phải nhỏ hơn giá bán"
             type="number"
-            required
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={6} lg={4}>
           <TextField
             fullWidth
+            error={availableQuantityErr}
             value={availableQuantity}
-            onChange={(e) => setAvailableQuantity(e.target.value)}
+            onChange={(e) => {
+              if (e.target.value < 0) return setAvailableQuantity(0);
+              setAvailableQuantity(e.target.value);
+            }}
             label="Số lượng sản phẩm"
             type="number"
             required
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={6} lg={4}>
+          <TextField
+            fullWidth
+            error={warrantyPeriodByDayErr}
+            value={warrantyPeriodByDay}
+            onChange={(e) => {
+              if (e.target.value < 0) return setWarrantyPeriodByDay(0);
+              setWarrantyPeriodByDay(e.target.value);
+            }}
+            label="Thời gian bảo hành tính theo ngày"
+            helperText="Thời gian bảo hành tính theo ngày"
+            type="number"
+            required
+          />
+        </Grid>
+        <Grid item xs={12} lg={4}>
           <TextField
             fullWidth
             value={state}
-            onChange={(e) => setState(e.target.value)}
+            onChange={(e) => {
+              if (availableQuantity == 0) {
+                return setState(availableStates.outStock.value);
+              }
+              setState(e.target.value);
+            }}
             label="trạng thái"
             select
             required>
-            {renderSelectOption(availableStates)}
+            {renderSelectOption(Object.values(availableStates))}
           </TextField>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} lg={5}>
           <TextField
             fullWidth
             value={brandId}
@@ -166,7 +336,7 @@ const AddProductPanel = () => {
             {renderSelectOption(brandOptions)}
           </TextField>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} lg={5}>
           <TextField
             fullWidth
             value={categoryId}
@@ -177,10 +347,78 @@ const AddProductPanel = () => {
             {renderSelectOption(categoryOptions)}
           </TextField>
         </Grid>
-        <input type="file" hidden onChange={onImageSelect} ref={fileInputRef} />
-        <Button variant="outlined" onClick={() => fileInputRef.current.click()}>
-          Chọn ảnh sản phẩm
-        </Button>
+        <Grid item xs={12} lg={7} sx={{}}>
+          <input
+            type="file"
+            hidden
+            onChange={onMainImageSelect}
+            ref={mainImageInputRef}
+            accept="image/*"
+          />
+          <Box
+            sx={{
+              display: 'flex',
+              px: 2,
+              mt: 2,
+              gap: 2,
+            }}>
+            <Box display="flex" flexDirection="column">
+              <Typography variant="h6">Ảnh chính sản phẩm *</Typography>
+              <Button
+                variant="outlined"
+                onClick={() => mainImageInputRef.current.click()}>
+                Tải lên ảnh
+              </Button>
+            </Box>
+            {mainImage && <img src={mainImage?.url} height="200px" />}
+          </Box>
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: 'flex',
+            px: 2,
+            mt: 2,
+            gap: 2,
+          }}>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={onPreviewImageSelect}
+            ref={previewImagesInputRef}
+            hidden
+          />
+          <Typography variant="h6">Ảnh preview sản phẩm</Typography>
+          <Button
+            variant="outlined"
+            onClick={() => previewImagesInputRef.current.click()}>
+            Tải lên ảnh
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <ImagePreviewContainer
+            images={images}
+            onRemoveImage={removePreviewImage}
+          />
+        </Grid>
+      </Grid>
+      <Grid item xs={12} container justifyContent={'center'}>
+        {haveErr && (
+          <Typography variant="h6" color="error">
+            Vui lòng sửa hết lỗi và điền đầy đủ các mục có đánh dấu *
+          </Typography>
+        )}
+      </Grid>
+      <Grid item xs={12} container justifyContent={'center'} sx={{ mt: 3 }}>
+        <LoadingButton
+          loading={loading}
+          variant="contained"
+          size="large"
+          onClick={addProduct}>
+          Thêm sản phẩm
+        </LoadingButton>
       </Grid>
     </Container>
   );

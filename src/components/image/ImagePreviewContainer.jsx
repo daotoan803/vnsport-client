@@ -1,9 +1,9 @@
 import React from 'react';
 
-import {Box, IconButton} from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 
-const ImagePreviewContainer = ({images, onRemoveImage}) => {
+const ImagePreviewContainer = ({ images, onRemoveImage }) => {
   return (
     <Box display="flex" sx={{ gap: 1, overflowX: 'auto', overflowY: 'hidden' }}>
       {images.map((image) => {
