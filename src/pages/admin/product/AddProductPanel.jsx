@@ -11,7 +11,6 @@ import {
   Typography,
   Grid,
   TextField,
-  Box,
   Button,
   MenuItem,
 } from '@mui/material';
@@ -67,7 +66,7 @@ const priceIsValid = (price) => {
 
 const discountPriceIsValid = (price, discountPrice) => {
   return (
-    (discountPrice > 0 && discountPrice <= price) ||
+    (discountPrice > 0 && discountPrice < price) ||
     discountPrice === 0 ||
     !discountPrice
   );
@@ -98,15 +97,16 @@ const AddProductPanel = () => {
   const [brandId, setBrandId] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [images, setImages] = useState([]);
-  const [mainImage, setMainImage] = useState(null);
 
   const [titleErr, setTitleErr] = useState(false);
+  const [titleNotUniqueErr, setTitleNotUniqueErr] = useState(false);
   const [detailErr, setDetailErr] = useState(false);
   const [priceErr, setPriceErr] = useState(false);
   const [discountPriceErr, setDiscountPriceErr] = useState(false);
   const [availableQuantityErr, setAvailableQuantityErr] = useState(false);
   const [warrantyPeriodByDayErr, setWarrantyPeriodByDayErr] = useState(false);
   const [haveErr, setHaveErr] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const [loading, setLoading] = useState(false);
 
@@ -117,6 +117,20 @@ const AddProductPanel = () => {
 
   useEffect(() => {
     setTitleErr(!titleIsValid(title));
+
+    const debounce = setTimeout(async () => {
+      if (title.trim() === '') return;
+      productApi.checkProductTitleIsValid(title).then((res) => {
+        if (res.status === 409) {
+          setTitleErr(true);
+          setTitleNotUniqueErr(true);
+        } else {
+          setTitleNotUniqueErr(false);
+        }
+      });
+    }, 300);
+
+    return () => window.clearTimeout(debounce);
   }, [title]);
 
   useEffect(() => {
@@ -158,6 +172,7 @@ const AddProductPanel = () => {
   ]);
 
   const addProduct = async () => {
+    if (loading) return;
     if (
       haveErr ||
       !title ||
@@ -167,7 +182,7 @@ const AddProductPanel = () => {
       !warrantyPeriodByDay ||
       !brandId ||
       !categoryId ||
-      !mainImage
+      images.length === 0
     ) {
       setHaveErr(true);
       return;
@@ -184,15 +199,22 @@ const AddProductPanel = () => {
       state,
       brandId,
       categoryId,
+      images: images.map((image) => image.file),
     });
 
     setLoading(false);
     if (res.status === 200) {
       alert('Thêm sản phẩm thành công');
+    } else {
+      if (res.status === 409) {
+        setErrorMessage('Tên sản phẩm đã tồn tại');
+      }
+      if (res.status === 500) {
+        setErrorMessage('Server lỗi, vui lòng liên hệ trợ giúp');
+      }
     }
   };
 
-  const mainImageInputRef = useRef(null);
   const previewImagesInputRef = useRef(null);
 
   const removePreviewImage = (imageName) => {
@@ -215,12 +237,6 @@ const AddProductPanel = () => {
     });
   };
 
-  const onMainImageSelect = (e) => {
-    const image = e.target.files[0];
-    console.log(createImageObject(image));
-    setMainImage(createImageObject(image));
-  };
-
   return (
     <Container>
       <Typography variant="h5" align="center">
@@ -240,6 +256,9 @@ const AddProductPanel = () => {
             label="Tên sản phẩm"
             required
           />
+          {titleNotUniqueErr && (
+            <Typography color="error">Tên sản phẩm đã tồn tại</Typography>
+          )}
         </Grid>
         <Grid item xs={12}>
           <TextField
@@ -259,7 +278,7 @@ const AddProductPanel = () => {
             error={priceErr}
             onChange={(e) => {
               if (e.target.value < 0) return setPrice(0);
-              setPrice(e.target.value);
+              setPrice(+e.target.value);
             }}
             label="Giá"
             type="number"
@@ -273,7 +292,7 @@ const AddProductPanel = () => {
             value={discountPrice}
             onChange={(e) => {
               if (e.target.value < 0) return setDiscountPrice(0);
-              setDiscountPrice(e.target.value);
+              setDiscountPrice(+e.target.value);
             }}
             label="Giá khuyến mãi"
             helperText="Giá khuyến mãi phải nhỏ hơn giá bán"
@@ -287,7 +306,7 @@ const AddProductPanel = () => {
             value={availableQuantity}
             onChange={(e) => {
               if (e.target.value < 0) return setAvailableQuantity(0);
-              setAvailableQuantity(e.target.value);
+              setAvailableQuantity(+e.target.value);
             }}
             label="Số lượng sản phẩm"
             type="number"
@@ -301,7 +320,7 @@ const AddProductPanel = () => {
             value={warrantyPeriodByDay}
             onChange={(e) => {
               if (e.target.value < 0) return setWarrantyPeriodByDay(0);
-              setWarrantyPeriodByDay(e.target.value);
+              setWarrantyPeriodByDay(+e.target.value);
             }}
             label="Thời gian bảo hành tính theo ngày"
             helperText="Thời gian bảo hành tính theo ngày"
@@ -347,32 +366,6 @@ const AddProductPanel = () => {
             {renderSelectOption(categoryOptions)}
           </TextField>
         </Grid>
-        <Grid item xs={12} lg={7} sx={{}}>
-          <input
-            type="file"
-            hidden
-            onChange={onMainImageSelect}
-            ref={mainImageInputRef}
-            accept="image/*"
-          />
-          <Box
-            sx={{
-              display: 'flex',
-              px: 2,
-              mt: 2,
-              gap: 2,
-            }}>
-            <Box display="flex" flexDirection="column">
-              <Typography variant="h6">Ảnh chính sản phẩm *</Typography>
-              <Button
-                variant="outlined"
-                onClick={() => mainImageInputRef.current.click()}>
-                Tải lên ảnh
-              </Button>
-            </Box>
-            {mainImage && <img src={mainImage?.url} height="200px" />}
-          </Box>
-        </Grid>
         <Grid
           item
           xs={12}
@@ -390,7 +383,7 @@ const AddProductPanel = () => {
             ref={previewImagesInputRef}
             hidden
           />
-          <Typography variant="h6">Ảnh preview sản phẩm</Typography>
+          <Typography variant="h6">Ảnh preview sản phẩm *</Typography>
           <Button
             variant="outlined"
             onClick={() => previewImagesInputRef.current.click()}>
@@ -408,6 +401,11 @@ const AddProductPanel = () => {
         {haveErr && (
           <Typography variant="h6" color="error">
             Vui lòng sửa hết lỗi và điền đầy đủ các mục có đánh dấu *
+          </Typography>
+        )}
+        {errorMessage && (
+          <Typography variant="h6" color="error">
+            {errorMessage}
           </Typography>
         )}
       </Grid>

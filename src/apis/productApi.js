@@ -79,26 +79,55 @@ const product = (() => {
     warrantyPeriodByDay,
     availableQuantity,
     state,
-    brand,
-    categories,
+    brandId,
+    categoryId,
+    images,
   }) => {
-    const { status, data } = await axios.post(
-      '/api/admin/product',
-      {
-        title,
-        detail,
-        price,
-        discountPrice,
-        warrantyPeriodByDay,
-        availableQuantity,
-        state,
-        brandId: brand,
-        categories,
-      },
-      auth.getAxiosAuthorizationConfig
-    );
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('detail', detail);
+    formData.append('price', price);
+    formData.append('discountPrice', discountPrice);
+    formData.append('warrantyPeriodByDay', warrantyPeriodByDay);
+    formData.append('availableQuantity', availableQuantity);
+    formData.append('state', state);
+    formData.append('brandId', brandId);
+    formData.append('categoryId', categoryId);
+    images.forEach((image) => formData.append('images', image));
 
-    return { status, data };
+    let res = null;
+    try {
+      const {
+        headers: { Authorization },
+      } = auth.getAxiosAuthorizationConfig();
+      res = await axios.post('/api/admin/products', formData, {
+        headers: {
+          'Content-type': 'multipart/form-data',
+          Authorization,
+        },
+      });
+    } catch (e) {
+      if (!e.response) throw e;
+      res = e.response;
+    }
+
+    return res;
+  };
+
+  const checkProductTitleIsValid = async (title) => {
+    let res = null;
+    try {
+      res = await axios.post(
+        '/api/admin/products/is-title-unique',
+        { title },
+        { ...auth.getAxiosAuthorizationConfig() }
+      );
+    } catch (e) {
+      if (!e.response) throw e;
+      res = e.response;
+    }
+
+    return res;
   };
 
   return {
@@ -108,6 +137,7 @@ const product = (() => {
     availableState,
     getProductDetail,
     availableSortByOption,
+    checkProductTitleIsValid,
   };
 })();
 

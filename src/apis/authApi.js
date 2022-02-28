@@ -68,11 +68,17 @@ const auth = (() => {
   };
 
   const validateToken = async () => {
-    if (token === null) return {status : 401};
+    if (token === null) return { status: 401 };
 
     let res = null;
     try {
-      res = await axios.post('/api/user/validateToken');
+      res = await axios.post(
+        '/api/user/validateToken',
+        {},
+        {
+          ...getAxiosAuthorizationConfig(),
+        }
+      );
     } catch (e) {
       if (!e.response) throw e;
       res = e.response;
