@@ -30,7 +30,7 @@ const ShopNavigationList = ({ toggleAdminMenu }) => {
 
   return (
     <List>
-      {authContext.role === auth.availableRole.admin && (
+      {authContext.role && authContext.role === auth.availableRole.admin && (
         <SideBarItem
           onClick={toggleAdminMenu}
           startIcon={<AdminPanelSettingsIcon />}

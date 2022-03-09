@@ -13,7 +13,7 @@ import SideBarLink from './../../../navigation/SideBarLink';
 import useCategoryGroups from '../../../../hooks/useCategoryGroups';
 
 const CategoryNavigation = () => {
-  const { status, data } = useCategoryGroups();
+  const { status, categoryGroups } = useCategoryGroups();
   const [expanded, setExpanded] = useState(null);
   const [expandCategoryMenu, setExpandCategoryMenu] = useState(false);
 
@@ -30,7 +30,6 @@ const CategoryNavigation = () => {
     setExpanded(identity);
   };
 
-  const { data: categoryGroups } = data;
   return (
     <>
       <SideBarItem

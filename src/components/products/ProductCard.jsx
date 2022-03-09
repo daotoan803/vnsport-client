@@ -1,6 +1,5 @@
 import React from 'react';
 import { formatNumberToVnd } from '../../utils/currency.utils';
-import product from '../../apis/productApi';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -30,7 +29,7 @@ const ProductCard = ({
     navigate(`/product/${id}`);
   };
 
-  const isOutStock = state === product.availableState.outStock;
+  const isOutStock = state === 'outstock';
 
   return (
     <Card

@@ -2,7 +2,7 @@ import axios from 'axios';
 import handleRequest from './utils/handle-request';
 
 export const getCategoryGroups = () =>
-  handleRequest(axios.get('/api/categories/group'));
+  handleRequest(axios.get('/api/categories/groups'));
 
 export const getCategories = ({ brandId, categoryGroupCode }) =>
   handleRequest(

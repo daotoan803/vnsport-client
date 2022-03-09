@@ -20,16 +20,21 @@ import viLocale from 'date-fns/locale/vi';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { AlertContextProvider } from './contexts/AlertContext';
 // import { SocketContextProvider } from './contexts/SocketContext';
-import { ChatContextProvider } from './contexts/ChatContext';
+// import { ChatContextProvider } from './contexts/ChatContext';
+
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const queryClient = new QueryClient();
 
 ReactDOM.render(
   <React.StrictMode>
-    <CssBaseline>
-      <ThemeProvider theme={theme}>
-        <LocalizationProvider dateAdapter={DateAdapter} locale={viLocale}>
-          <BrowserRouter>
-            <AuthContextProvider>
-              <ChatContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <CssBaseline>
+        <ThemeProvider theme={theme}>
+          <LocalizationProvider dateAdapter={DateAdapter} locale={viLocale}>
+            <BrowserRouter>
+              <AuthContextProvider>
+                {/* <ChatContextProvider> */}
                 <AlertContextProvider>
                   <ModalContextProvider>
                     <SideBarContextProvider>
@@ -37,12 +42,13 @@ ReactDOM.render(
                     </SideBarContextProvider>
                   </ModalContextProvider>
                 </AlertContextProvider>
-              </ChatContextProvider>
-            </AuthContextProvider>
-          </BrowserRouter>
-        </LocalizationProvider>
-      </ThemeProvider>
-    </CssBaseline>
+                {/* </ChatContextProvider> */}
+              </AuthContextProvider>
+            </BrowserRouter>
+          </LocalizationProvider>
+        </ThemeProvider>
+      </CssBaseline>
+    </QueryClientProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

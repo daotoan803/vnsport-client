@@ -5,7 +5,6 @@ export default (defaultValue, checkValueIsValid) => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    console.log(checkValueIsValid(value));
     setError(!checkValueIsValid(value));
   }, [value]);
 

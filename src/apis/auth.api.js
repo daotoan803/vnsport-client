@@ -4,6 +4,11 @@ import handleRequest from './utils/handle-request';
 const setAxiosAuth = (token) => {
   axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
 };
+
+export const initializeToken = (token) => {
+  setAxiosAuth(token);
+};
+
 export const signin = async ({ email, password }) => {
   const res = await handleRequest(
     axios.post('/api/user/signin', { email, password })
@@ -24,6 +29,10 @@ export const signup = async ({ name, email, gender, dob, password }) => {
   return res;
 };
 
+export const logout = () => {
+  axios.defaults.headers.common['Authorization'] = null;
+};
+
 export const checkToken = () =>
   handleRequest(axios.post('/api/user/check-token'));
 
@@ -35,4 +44,6 @@ export default {
   signup,
   checkToken,
   logoutAll,
+  logout,
+  initializeToken,
 };

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import auth from '../apis/auth.api';
+import authApi from '../apis/auth.api';
 
 const AuthContext = createContext({
   isLoggedIn: false,
@@ -15,20 +15,27 @@ const AuthContext = createContext({
 export default AuthContext;
 
 export const AuthContextProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(auth.isLoggedIn());
-  const [role, setRole] = useState(auth.getRole());
-  const [token, setToken] = useState(auth.getToken());
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+  const [role, setRole] = useState(
+    JSON.parse(localStorage.getItem('role')) || null
+  );
+  const [token, setToken] = useState(
+    JSON.parse(localStorage.getItem('token')) || null
+  );
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem('user')) || null
+  );
+
+  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(token));
 
   const onLoginSuccess = ({ role, token, user }) => {
     if (role) setRole(role);
-    setToken(token);
     setIsLoggedIn(true);
+    setToken(token);
     setUser(user);
   };
 
   const onLogout = () => {
-    auth.logout();
+    authApi.logout();
     setIsLoggedIn(false);
     setToken(null);
     setRole(null);
@@ -36,12 +43,14 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    auth.validateToken().then((res) => {
-      if (res.status === 401) {
-        onLogout();
-        auth.logout();
-      }
-    });
+    if (token) {
+      authApi.initializeToken(token);
+      authApi.checkToken().then((res) => {
+        if (res.status !== 204) {
+          onLogout();
+        }
+      });
+    }
   }, []);
 
   return (

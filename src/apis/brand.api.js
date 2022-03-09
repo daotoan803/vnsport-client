@@ -6,7 +6,7 @@ export const getBrands = ({ categoryCode, categoryGroupCode }) =>
     axios.get('/api/brands', {
       params: {
         categoryCode,
-        categoryGroupCode,
+        ...(categoryCode ? {} : { categoryGroupCode }),
       },
     })
   );

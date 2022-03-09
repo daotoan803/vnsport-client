@@ -19,83 +19,61 @@ import {
   Typography,
 } from '@mui/material';
 
-import productApi from '../../apis/productApi';
-import brandApi from '../../apis/brandApi';
+import { sortOptions } from '../../enums/product.enum';
+
 import ProductList from '../../components/products/ProductList';
-import categoryApi from '../../apis/categoryApi';
 import FilterRadioGroup from './../../components/filter/FilterRadioGroup';
+import useProducts from '../../hooks/useProducts';
+import useBrands from '../../hooks/useBrands';
+import useCategories from '../../hooks/useCategories';
 
 const sortByOptions = [
-  { value: productApi.availableSortByOption.title, label: 'Tên sản phẩm' },
-  { value: productApi.availableSortByOption.mostVisited, label: 'Xem nhiều' },
-  { value: productApi.availableSortByOption.mostSold, label: 'Đã bán' },
-  { value: productApi.availableSortByOption.priceDesc, label: 'Giá giảm dần' },
-  { value: productApi.availableSortByOption.priceAsc, label: 'Giá tăng dần' },
+  { value: sortOptions.name, label: 'Tên sản phẩm' },
+  { value: sortOptions.mostVisited, label: 'Xem nhiều' },
+  { value: sortOptions.mostSold, label: 'Đã bán' },
+  { value: sortOptions.priceDesc, label: 'Giá giảm dần' },
+  { value: sortOptions.priceAsc, label: 'Giá tăng dần' },
 ];
 
 const ProductPage = () => {
   const LIMIT = 20;
-
-  const [products, setProducts] = useState([]);
-  const [brands, setBrands] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [filterIsExpand, setFilterIsExpanded] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [maxPage, setMaxPage] = useState(1);
 
   const { categoryGroupCode } = useParams();
-  const [queries, setQueries] = useSearchParams();
+  const [params, setParams] = useSearchParams();
+
+  useEffect(() => {
+    if (!params.has('page')) {
+      params.set('page', 1);
+      setParams(params);
+    }
+    if (!params.has('sortBy')) {
+      console.log(sortByOptions[0].value);
+      params.set('sortBy', sortByOptions[0].value);
+      setParams(params);
+    }
+  }, [params]);
+
+  const page = Number(params.get('page')) || 1;
+  const categoryCode = params.get('category');
+  const brandId = params.get('brand');
+  const sortBy = params.get('sortBy') || '';
 
   const topRef = useRef(null);
 
-  const filter = {
-    ...(queries.has('page') ? { page: queries.get('page') } : { page: 1 }),
-    ...(queries.has('category') ? { category: queries.get('category') } : {}),
-    ...(queries.has('sortBy')
-      ? { sortBy: queries.get('sortBy') }
-      : { sortBy: productApi.availableSortByOption.title }),
-    ...(queries.has('brand') ? { brand: queries.get('brand') } : {}),
-    ...(queries.has('minPrice') ? { minPrice: queries.get('minPrice') } : {}),
-    ...(queries.has('maxPrice') ? { maxPrice: queries.get('maxPrice') } : {}),
-  };
+  const {
+    status: productStatus,
+    products,
+    maxPage,
+  } = useProducts(page, LIMIT, {
+    categoryGroupCode,
+    categoryCode,
+    brandId,
+    sortBy,
+  });
 
-  useEffect(() => {
-    (async function fetchFilterOption() {
-      const [{ data: brands }, { data: categories }] = await Promise.all([
-        brandApi.getBrands({ categoryGroupCodeOrId: categoryGroupCode }),
-        categoryApi.getCategories(categoryGroupCode),
-      ]);
-
-      setBrands(
-        brands.map((brand) => ({
-          value: brand.id,
-          label: brand.name,
-        }))
-      );
-      setCategories(
-        categories.map((category) => ({
-          value: category.id,
-          label: category.name,
-        }))
-      );
-    })();
-  }, [categoryGroupCode]);
-
-  useEffect(() => {
-    setLoading(true);
-    (async function fetchProducts() {
-      const { data } = await productApi.getListOfProductPreview({
-        ...filter,
-        categoryGroup: categoryGroupCode,
-        limit: LIMIT,
-        page: filter.page,
-      });
-
-      setProducts(data.products);
-      setMaxPage(data.maxPage);
-      setLoading(false);
-    })();
-  }, [queries, categoryGroupCode]);
+  const { brands } = useBrands({ categoryGroupCode, categoryCode });
+  const { categories } = useCategories({ categoryGroupCode, brandId });
 
   const toggleFilterExpand = () => {
     setFilterIsExpanded(!filterIsExpand);
@@ -104,6 +82,13 @@ const ProductPage = () => {
   const theme = useTheme();
   const breakPointIsLg = useMediaQuery(theme.breakpoints.up('md'));
 
+  const onPageChange = (e, value) => {
+    topRef.current.scrollIntoView({ behavior: 'smooth' });
+    params.set('page', value);
+    setParams(params);
+  };
+
+  const loading = productStatus === 'loading';
   return (
     <Grid container ref={topRef}>
       <Grid
@@ -121,30 +106,39 @@ const ProductPage = () => {
         <Collapse in={breakPointIsLg ? true : filterIsExpand} unmountOnExit>
           <FilterRadioGroup
             label="Thương hiệu"
-            options={brands}
-            value={filter.brand || -1}
+            options={brands.map((brand) => ({
+              value: brand.id,
+              label: brand.name,
+            }))}
+            value={brandId || -1}
             onChange={(e) => {
               if (+e.target.value === -1) {
-                return setQueries((prev) => {
-                  delete prev.brand;
-                  return { ...prev };
-                });
+                params.delete('brand');
+                params.set('page', 1);
+                setParams(params);
+                return;
               }
-              setQueries({ ...filter, brand: e.target.value });
+              params.set('brand', e.target.value);
+              params.set('page', 1);
+              setParams(params);
             }}
           />
           <FilterRadioGroup
             label="Danh mục"
-            options={categories}
-            value={filter.category || -1}
+            options={categories.map((category) => ({
+              value: category.code,
+              label: category.name,
+            }))}
+            value={categoryCode || -1}
             onChange={(e) => {
               if (+e.target.value === -1) {
-                return setQueries((prev) => {
-                  delete prev.category;
-                  return { ...prev };
-                });
+                params.delete('category');
+                params.set('page', 1);
+                return setParams(params);
               }
-              setQueries({ ...filter, category: e.target.value });
+              params.set('category', e.target.value);
+              params.set('page', 1);
+              setParams(params);
             }}
           />
           <Box sx={{ my: 2 }} display="flex" justifyContent="center">
@@ -171,10 +165,12 @@ const ProductPage = () => {
               sx={{ minWidth: '12rem' }}
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={filter.sortBy}
+              value={sortBy}
               label="Sắp xếp theo"
               onChange={(e) => {
-                setQueries({ ...filter, sortBy: e.target.value });
+                params.set('sortBy', e.target.value);
+                params.set('page', 1);
+                setParams(params);
               }}>
               {sortByOptions.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
@@ -201,14 +197,7 @@ const ProductPage = () => {
           )}
         </Box>
         <Box display="flex" justifyContent="center" sx={{ py: 2 }}>
-          <Pagination
-            count={maxPage}
-            page={queries.has('page') ? +filter.page : 1}
-            onChange={(e, value) => {
-              topRef.current.scrollIntoView({ behavior: 'smooth' });
-              setQueries({ ...filter, page: value });
-            }}
-          />
+          <Pagination count={maxPage} page={page} onChange={onPageChange} />
         </Box>
       </Grid>
     </Grid>

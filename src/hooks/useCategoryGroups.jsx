@@ -1,7 +1,10 @@
-import { useQuery } from "react-query";
-import {getCategoryGroups} from '../apis/category.api'
+import { useQuery } from 'react-query';
+
+import categoryApi from '../apis/category.api';
 
 export default () => {
-  return useQuery('categoryGroup', getCategoryGroups)
-}
+  const {status, data} = useQuery('categoryGroup', categoryApi.getCategoryGroups);
 
+  const categoryGroups = data?.data || []
+  return {status, categoryGroups}
+};

@@ -20,7 +20,7 @@ export const getProducts = ({
         sortBy,
         brandId,
         categoryCode,
-        categoryGroupCode,
+        ...(categoryCode ? {} : { categoryGroupCode }),
       },
     })
   );
