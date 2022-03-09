@@ -11,7 +11,7 @@ import ToggleLoginModalWrapper from '../../modal/ToggleLoginModal';
 import LogoutButton from '../../button/LogoutButton';
 import ShopNavigationList from './shop/ShopNavigationList';
 import CircularProgress from '@mui/material/CircularProgress';
-import authApi from '../../../apis/authApi';
+import authApi from '../../../apis/auth.api';
 
 const AdminNavigationList = lazy(() => import('./admin/AdminNavigationList'));
 

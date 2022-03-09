@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import auth from '../apis/authApi';
+import auth from '../apis/auth.api';
 
 const AuthContext = createContext({
   isLoggedIn: false,
@@ -37,7 +37,6 @@ export const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     auth.validateToken().then((res) => {
-      console.log(res);
       if (res.status === 401) {
         onLogout();
         auth.logout();

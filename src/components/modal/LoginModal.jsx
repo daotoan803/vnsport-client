@@ -12,7 +12,7 @@ import {
 import LoginIcon from '@mui/icons-material/Login';
 import LoadingButton from '@mui/lab/LoadingButton';
 
-import authApi from '../../apis/authApi';
+import authApi from '../../apis/auth.api';
 import AuthContext from './../../contexts/AuthContext';
 import AlertContext from './../../contexts/AlertContext';
 

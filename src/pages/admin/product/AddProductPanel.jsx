@@ -5,6 +5,7 @@ import categoryApi from './../../../apis/categoryApi';
 import ImagePreviewContainer from './../../../components/image/ImagePreviewContainer';
 import productApi from './../../../apis/productApi';
 import LoadingButton from '@mui/lab/LoadingButton';
+import useInput from '../../../hooks/useInput';
 
 import {
   Container,
@@ -87,24 +88,23 @@ const warrantyPeriodByDayIsValid = (warrantyPeriodByDay) => {
 const AddProductPanel = () => {
   const [brandOptions, setBrandOptions] = useState([]);
   const [categoryOptions, setCategoryOptions] = useState([]);
-  const [title, setTitle] = useState('');
-  const [detail, setDetail] = useState('');
-  const [price, setPrice] = useState('');
   const [discountPrice, setDiscountPrice] = useState('');
-  const [availableQuantity, setAvailableQuantity] = useState('');
-  const [warrantyPeriodByDay, setWarrantyPeriodByDay] = useState('');
+
+  const [titleErr, title, setTitle] = useInput('', titleIsValid);
+  const [detailErr, detail, setDetail] = useInput('', detailIsValid);
+  const [priceErr, price, setPrice] = useInput('', priceIsValid);
+  const [availableQuantityErr, availableQuantity, setAvailableQuantity] =
+    useInput('', availableQuantityIsValid);
+  const [warrantyPeriodByDayErr, warrantyPeriodByDay, setWarrantyPeriodByDay] =
+    useInput('', warrantyPeriodByDayIsValid);
+    
   const [state, setState] = useState(availableStates.available.value);
   const [brandId, setBrandId] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [images, setImages] = useState([]);
 
-  const [titleErr, setTitleErr] = useState(false);
-  const [titleNotUniqueErr, setTitleNotUniqueErr] = useState(false);
-  const [detailErr, setDetailErr] = useState(false);
-  const [priceErr, setPriceErr] = useState(false);
   const [discountPriceErr, setDiscountPriceErr] = useState(false);
-  const [availableQuantityErr, setAvailableQuantityErr] = useState(false);
-  const [warrantyPeriodByDayErr, setWarrantyPeriodByDayErr] = useState(false);
+  const [titleNotUniqueErr, setTitleNotUniqueErr] = useState(false);
   const [haveErr, setHaveErr] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -116,13 +116,10 @@ const AddProductPanel = () => {
   }, []);
 
   useEffect(() => {
-    setTitleErr(!titleIsValid(title));
-
     const debounce = setTimeout(async () => {
       if (title.trim() === '') return;
       productApi.checkProductTitleIsValid(title).then((res) => {
         if (res.status === 409) {
-          setTitleErr(true);
           setTitleNotUniqueErr(true);
         } else {
           setTitleNotUniqueErr(false);
@@ -134,24 +131,8 @@ const AddProductPanel = () => {
   }, [title]);
 
   useEffect(() => {
-    setPriceErr(!priceIsValid(price));
     setDiscountPriceErr(!discountPriceIsValid(price, discountPrice));
   }, [price, discountPrice]);
-
-  useEffect(() => {
-    setAvailableQuantityErr(!availableQuantityIsValid(availableQuantity));
-    if (availableQuantity === 0) {
-      setState(availableStates.outStock.value);
-    }
-  }, [availableQuantity]);
-
-  useEffect(() => {
-    setWarrantyPeriodByDayErr(!warrantyPeriodByDayIsValid(warrantyPeriodByDay));
-  }, [warrantyPeriodByDay]);
-
-  useEffect(() => {
-    setDetailErr(!detailIsValid(detail));
-  }, [detail]);
 
   useEffect(() => {
     setHaveErr(

@@ -20,7 +20,7 @@ const AdminProductPage = () => {
   const [activeTab, setActiveTab] = useState(activeTabIndex);
 
   return (
-    <Container component={Paper}>
+    <Container component={Paper} sx={{pb: 10}}>
       <Typography>This is admin products page</Typography>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={activeTab} onChange={(e, newTab) => setActiveTab(newTab)}>
@@ -31,7 +31,6 @@ const AdminProductPage = () => {
         </Tabs>
       </Box>
       <Outlet />
-      <h1>outlet should show here</h1>
     </Container>
   );
 };

@@ -7,13 +7,22 @@ import CartSideBar from './components/sidebar/cart_side_bar/CartSideBar';
 import BackdropSpinner from './components/suspend_fallback/BackdropSpinner';
 
 import SideBarContext from './contexts/SideBarContext';
+import ImageModal from './components/modal/ImageModal';
 
 const AdminChatPage = lazy(() => import('./pages/admin/AdminChatPage'));
 const ShopHomePage = lazy(() => import('./pages/shop/ShopIndexPage'));
 const AdminIndexPage = lazy(() => import('./pages/admin/AdminIndexPage'));
-import ImageModal from './components/modal/ImageModal';
-import AdminProductPage from './pages/admin/AdminProductPage';
-import AddProductPanel from './pages/admin/product/AddProductPanel';
+const AdminProductPage = lazy(() => import('./pages/admin/AdminProductPage'));
+const AddProductPanel = lazy(() =>
+  import('./pages/admin/product/AddProductPanel')
+);
+const ManageProductPanel = lazy(() =>
+  import('./pages/admin/product/ManageProductPanel')
+);
+
+const renderSuspense = (lazyComponent) => {
+  return <Suspense fallback={<BackdropSpinner />}>{lazyComponent}</Suspense>;
+};
 
 const App = () => {
   const sideBarContext = useContext(SideBarContext);
@@ -26,31 +35,19 @@ const App = () => {
         <Routes>
           <Route
             path="admin/chat"
-            element={
-              <Suspense fallback={<BackdropSpinner />}>
-                <AdminChatPage />
-              </Suspense>
-            }
+            element={renderSuspense(<AdminChatPage />)}
           />
-          <Route
-            path="admin"
-            element={
-              <Suspense fallback={<BackdropSpinner />}>
-                <AdminIndexPage />
-              </Suspense>
-            }>
-            <Route path="products" element={<AdminProductPage />}>
-              <Route path="new" element={<AddProductPanel />} />
+          <Route path="admin" element={renderSuspense(<AdminIndexPage />)}>
+            <Route
+              path="products"
+              element={renderSuspense(<AdminProductPage />)}>
+              <Route
+                path=""
+                element={renderSuspense(<ManageProductPanel />)}></Route>
+              <Route path="new" element={renderSuspense(<AddProductPanel />)} />
             </Route>
           </Route>
-          <Route
-            path="/*"
-            element={
-              <Suspense fallback={<BackdropSpinner />}>
-                <ShopHomePage />
-              </Suspense>
-            }
-          />
+          <Route path="/*" element={renderSuspense(<ShopHomePage />)} />
         </Routes>
       </Box>
     </>

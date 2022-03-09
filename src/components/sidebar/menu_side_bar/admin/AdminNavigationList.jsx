@@ -11,7 +11,7 @@ import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import auth from '../../../../apis/authApi';
+import auth from '../../../../apis/auth.api';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import AuthContext from '../../../../contexts/AuthContext';
 

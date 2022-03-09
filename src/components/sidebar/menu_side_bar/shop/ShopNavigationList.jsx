@@ -7,7 +7,7 @@ import ContactPageIcon from '@mui/icons-material/ContactPage';
 import RouterLink from '../../../navigation/SideBarLink';
 import SideBarItem from '../SideBarItem';
 import AuthContext from '../../../../contexts/AuthContext';
-import auth from '../../../../apis/authApi';
+import auth from '../../../../apis/auth.api';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CategoryNavigation from './CategoryNavigation';

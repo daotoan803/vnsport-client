@@ -5,10 +5,9 @@ import ChatRoomList from '../../components/chat/ChatRoomList';
 import BackButton from '../../components/button/BackButton';
 import MainChatBox from '../../components/chat/MainChatBox';
 import UserInformationBox from './../../components/user/UserInformationBox';
-import QuickProductSearchBox from '../../components/products/QuickProductSearchBox';
 import ToggleSideMenuButton from './../../components/button/ToggleSideMenuButton';
 import AuthContext from './../../contexts/AuthContext';
-import authApi from './../../apis/authApi';
+import authApi from './../../apis/auth.api';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import ChatContext from './../../contexts/ChatContext';
@@ -18,9 +17,11 @@ const AdminChatPage = () => {
   const authContext = useContext(AuthContext);
   const { chatRoomId } = useContext(ChatContext);
   const navigate = useNavigate();
-  const [opponentUser, setOpponentUser] = useState(ChatContext);
+  const [opponentUser, setOpponentUser] = useState(null);
 
   useEffect(() => {
+    if (!chatRoomId) return;
+
     userApi.findUserInfo({ chatRoomId }).then((res) => {
       setOpponentUser(res.data);
     });
@@ -44,12 +45,14 @@ const AdminChatPage = () => {
           component={Box}
           sx={{ height: '100vh', overflow: 'hidden' }}
           spacing={1}>
-          <Grid item component={Paper} xs={2}>
+          <Grid item component={Paper} xs={2} lg={3}>
             <Box
               sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <Box sx={{ pl: 2, py: 1 }}>
                 <ToggleSideMenuButton />
-                <BackButton sx={{ display: 'none' }} />
+                <BackButton
+                  sx={{ ...(isLessThanLg ? { display: 'none' } : {}) }}
+                />
               </Box>
               <ChatRoomList />
             </Box>
@@ -68,19 +71,10 @@ const AdminChatPage = () => {
               <Paper
                 elevation={1}
                 sx={{
-                  height: '40%',
+                  height: '100%',
                   overflow: 'auto',
                 }}>
                 <UserInformationBox user={opponentUser} />
-              </Paper>
-              <Paper
-                sx={{
-                  height: '60%',
-                  overflow: 'auto',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}>
-                <QuickProductSearchBox />
               </Paper>
             </Grid>
           )}

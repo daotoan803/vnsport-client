@@ -47,13 +47,15 @@ const ProductCard = ({
           justifyContent: 'space-between',
           flexGrow: 1,
         }}>
-        <CardMedia
-          component="img"
-          image={image}
-          alt={title}
-          sx={{ cursor: 'pointer', minHeight: 150 }}
-          onClick={navigateToProductPage}
-        />
+        <Box sx={{ minHeight: '210px', display: 'flex', alignItems: 'center' }}>
+          <CardMedia
+            component="img"
+            image={image}
+            alt={title}
+            sx={{ cursor: 'pointer', width: '100%' }}
+            onClick={navigateToProductPage}
+          />
+        </Box>
         <CardContent
           onClick={navigateToProductPage}
           sx={{

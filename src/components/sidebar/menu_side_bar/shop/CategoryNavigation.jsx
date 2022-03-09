@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-
-import categoryApi from '../../../../apis/categoryApi';
+import React, { useState } from 'react';
 
 import { Box, IconButton, Collapse, List } from '@mui/material';
 
@@ -12,23 +10,27 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import SideBarItem from '../SideBarItem';
 import SideBarLink from './../../../navigation/SideBarLink';
 
-const CategoryNavigation = () => {
-  const [categoryGroups, setCategoryGroups] = useState([]);
+import useCategoryGroups from '../../../../hooks/useCategoryGroups';
 
+const CategoryNavigation = () => {
+  const { status, data } = useCategoryGroups();
   const [expanded, setExpanded] = useState(null);
   const [expandCategoryMenu, setExpandCategoryMenu] = useState(false);
 
-  useEffect(() => {
-    categoryApi.getCategoryGroups().then(({ data }) => {
-      setCategoryGroups(data);
-    });
-  }, []);
+  if (status === 'loading') {
+    return <div>...loading</div>;
+  }
+
+  if (status === 'error') {
+    return <div>Cannot load category group</div>;
+  }
 
   const expandCategoryGroup = (identity) => {
     if (identity === expanded) return setExpanded(null);
     setExpanded(identity);
   };
 
+  const { data: categoryGroups } = data;
   return (
     <>
       <SideBarItem

@@ -1,6 +1,6 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import ModalContext from '../../contexts/ModalContext';
-import authApi from '../../apis/authApi';
+import authApi from '../../apis/auth.api';
 import AuthContext from './../../contexts/AuthContext';
 import DatePicker from '@mui/lab/DatePicker';
 
@@ -19,6 +19,7 @@ import {
 
 import LoadingButton from '@mui/lab/LoadingButton';
 import AlertContext from './../../contexts/AlertContext';
+import useInput from '../../hooks/useInput';
 
 const style = {
   position: 'absolute',
@@ -38,49 +39,35 @@ const availableGender = [
   { value: 'other', label: 'Khác' },
 ];
 
-const emailRegex =
-  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const checkNameIsValid = (name) => {
+  return name === '' || (name.trim().length >= 1 && name.length <= 254);
+};
+
+const checkEmailIsValid = (email) => {
+  const emailRegex =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+  return email === '' || email.match(emailRegex);
+};
+
+const checkPasswordIsValid = (password) => {
+  return password === '' || (password.length >= 4 && password.length <= 200);
+};
 
 const SignupModal = () => {
   const [loading, setLoading] = useState(false);
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [gender, setGender] = useState(availableGender[2].value);
   const [dob, setDob] = useState(new Date('1/1/2000'));
 
-  const [nameErr, setNameErr] = useState(false);
-  const [emailErr, setEmailErr] = useState(false);
-  const [passwordErr, setPasswordErr] = useState(false);
   const [signupErr, setSignupErr] = useState('');
 
-  //validate name
-  useEffect(() => {
-    if (name === '' || (name.trim().length >= 1 && name.length <= 254)) {
-      if (nameErr) setNameErr(false);
-      return;
-    }
-    if (!nameErr) setNameErr(true);
-  }, [name]);
-
-  //validate email
-  useEffect(() => {
-    if (email === '' || email.match(emailRegex)) {
-      if (emailErr) setEmailErr(false);
-      return;
-    }
-    if (!emailErr) return setEmailErr(true);
-  }, [email]);
-
-  //Validate password
-  useEffect(() => {
-    if (password === '' || (password.length >= 4 && password.length <= 200)) {
-      if (passwordErr) setPasswordErr(false);
-      return;
-    }
-    if (!passwordErr) setPasswordErr(true);
-  }, [password]);
+  const [nameErr, name, setName] = useInput('', checkNameIsValid);
+  const [emailErr, email, setEmail] = useInput('', checkEmailIsValid);
+  const [passwordErr, password, setPassword] = useInput(
+    '',
+    checkPasswordIsValid
+  );
 
   const modalContext = useContext(ModalContext);
   const authContext = useContext(AuthContext);

@@ -1,8 +1,8 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import AuthContext from './AuthContext';
-import chatSocketApi from './../apis/chatSocketApi';
-import auth from './../apis/authApi';
-import chatApi from './../apis/chatApi';
+import chatSocketApi from '../apis/chatSocket.api';
+import auth from './../apis/auth.api';
+import chatApi from '../apis/chat.api';
 
 const ChatContext = createContext({
   loadingMessage: false,
