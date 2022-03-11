@@ -11,7 +11,7 @@ import ToggleLoginModalWrapper from '../../modal/ToggleLoginModal';
 import LogoutButton from '../../button/LogoutButton';
 import ShopNavigationList from './shop/ShopNavigationList';
 import CircularProgress from '@mui/material/CircularProgress';
-import authApi from '../../../apis/auth.api';
+import { availableRole } from '../../../enums/user.enum';
 
 const AdminNavigationList = lazy(() => import('./admin/AdminNavigationList'));
 
@@ -23,10 +23,7 @@ const MenuSideBar = () => {
   const [hideShopNavigation, setHideShopNavigation] = useState(false);
 
   useEffect(() => {
-    if (
-      !authContext.isLoggedIn ||
-      authContext.role !== authApi.availableRole.admin
-    ) {
+    if (!authContext.isLoggedIn || authContext.role !== availableRole.admin) {
       setShowingAdminMenu(false);
       setHideShopNavigation(false);
     }

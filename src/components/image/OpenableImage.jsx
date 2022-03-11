@@ -7,6 +7,7 @@ const OpenableImage = (props) => {
   const src = props.src;
   return (
     <img
+      className="pointer"
       src={src}
       {...props}
       onClick={() => {

@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import brandApi from './../../../apis/brandApi';
-import categoryApi from './../../../apis/categoryApi';
 import ImagePreviewContainer from './../../../components/image/ImagePreviewContainer';
-import productApi from './../../../apis/productApi';
+import productApi from '../../../apis/product.api';
 import LoadingButton from '@mui/lab/LoadingButton';
 import useInput from '../../../hooks/useInput';
 
@@ -86,8 +84,8 @@ const warrantyPeriodByDayIsValid = (warrantyPeriodByDay) => {
 };
 
 const AddProductPanel = () => {
-  const [brandOptions, setBrandOptions] = useState([]);
-  const [categoryOptions, setCategoryOptions] = useState([]);
+  // const [brandOptions, setBrandOptions] = useState([]);
+  // const [categoryOptions, setCategoryOptions] = useState([]);
   const [discountPrice, setDiscountPrice] = useState('');
 
   const [titleErr, title, setTitle] = useInput('', titleIsValid);
@@ -97,7 +95,7 @@ const AddProductPanel = () => {
     useInput('', availableQuantityIsValid);
   const [warrantyPeriodByDayErr, warrantyPeriodByDay, setWarrantyPeriodByDay] =
     useInput('', warrantyPeriodByDayIsValid);
-    
+
   const [state, setState] = useState(availableStates.available.value);
   const [brandId, setBrandId] = useState('');
   const [categoryId, setCategoryId] = useState('');
@@ -110,10 +108,13 @@ const AddProductPanel = () => {
 
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchBrandOptions(setBrandOptions);
-    fetchCategoryOptions(setCategoryOptions);
-  }, []);
+  // useEffect(() => {
+  //   fetchBrandOptions(setBrandOptions);
+  //   fetchCategoryOptions(setCategoryOptions);
+  // }, []);
+
+  const {brands} = useBrands()
+
 
   useEffect(() => {
     const debounce = setTimeout(async () => {

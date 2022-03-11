@@ -29,7 +29,11 @@ const FilterRadioGroup = ({ label, value, onChange, options }) => {
               <FormControlLabel
                 value={option.value}
                 control={<Radio />}
-                label={option.label}
+                label={
+                  option.count
+                    ? `${option.label} (${option.count})`
+                    : option.label
+                }
               />
             </Grid>
           ))}

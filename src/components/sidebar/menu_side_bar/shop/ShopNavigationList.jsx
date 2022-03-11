@@ -7,10 +7,10 @@ import ContactPageIcon from '@mui/icons-material/ContactPage';
 import RouterLink from '../../../navigation/SideBarLink';
 import SideBarItem from '../SideBarItem';
 import AuthContext from '../../../../contexts/AuthContext';
-import auth from '../../../../apis/auth.api';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CategoryNavigation from './CategoryNavigation';
+import { availableRole } from './../../../../enums/user.enum';
 
 const shopNavigation = [
   {
@@ -30,7 +30,7 @@ const ShopNavigationList = ({ toggleAdminMenu }) => {
 
   return (
     <List>
-      {authContext.role && authContext.role === auth.availableRole.admin && (
+      {authContext.role && authContext.role === availableRole.admin && (
         <SideBarItem
           onClick={toggleAdminMenu}
           startIcon={<AdminPanelSettingsIcon />}

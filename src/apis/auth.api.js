@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from './axios';
 import handleRequest from './utils/handle-request';
 
 const setAxiosAuth = (token) => {

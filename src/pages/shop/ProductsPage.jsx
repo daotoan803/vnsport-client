@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useSearchParams, useParams } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
+import { useSearchParams, useParams, useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -7,10 +7,6 @@ import {
   Grid,
   Button,
   Box,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormControl,
   Divider,
   Collapse,
   CircularProgress,
@@ -22,42 +18,23 @@ import {
 import { sortOptions } from '../../enums/product.enum';
 
 import ProductList from '../../components/products/ProductList';
-import FilterRadioGroup from './../../components/filter/FilterRadioGroup';
 import useProducts from '../../hooks/useProducts';
-import useBrands from '../../hooks/useBrands';
-import useCategories from '../../hooks/useCategories';
-
-const sortByOptions = [
-  { value: sortOptions.name, label: 'Tên sản phẩm' },
-  { value: sortOptions.mostVisited, label: 'Xem nhiều' },
-  { value: sortOptions.mostSold, label: 'Đã bán' },
-  { value: sortOptions.priceDesc, label: 'Giá giảm dần' },
-  { value: sortOptions.priceAsc, label: 'Giá tăng dần' },
-];
+import BrandFilter from '../../components/filter/BrandFilter';
+import CategoryFilter from './../../components/filter/CategoryFilter';
+import SortOptions from './../../components/products/SortOptions';
 
 const ProductPage = () => {
   const LIMIT = 20;
   const [filterIsExpand, setFilterIsExpanded] = useState(false);
 
-  const { categoryGroupCode } = useParams();
+  const { categoryGroupCode, categoryCode } = useParams();
   const [params, setParams] = useSearchParams();
 
-  useEffect(() => {
-    if (!params.has('page')) {
-      params.set('page', 1);
-      setParams(params);
-    }
-    if (!params.has('sortBy')) {
-      console.log(sortByOptions[0].value);
-      params.set('sortBy', sortByOptions[0].value);
-      setParams(params);
-    }
-  }, [params]);
-
   const page = Number(params.get('page')) || 1;
-  const categoryCode = params.get('category');
   const brandId = params.get('brand');
-  const sortBy = params.get('sortBy') || '';
+  const sortBy = params.get('sortBy') || sortOptions.name;
+
+  const navigate = useNavigate();
 
   const topRef = useRef(null);
 
@@ -71,10 +48,6 @@ const ProductPage = () => {
     brandId,
     sortBy,
   });
-
-  const { brands } = useBrands({ categoryGroupCode, categoryCode });
-  const { categories } = useCategories({ categoryGroupCode, brandId });
-
   const toggleFilterExpand = () => {
     setFilterIsExpanded(!filterIsExpand);
   };
@@ -104,13 +77,10 @@ const ProductPage = () => {
           </Button>
         )}
         <Collapse in={breakPointIsLg ? true : filterIsExpand} unmountOnExit>
-          <FilterRadioGroup
-            label="Thương hiệu"
-            options={brands.map((brand) => ({
-              value: brand.id,
-              label: brand.name,
-            }))}
-            value={brandId || -1}
+          <BrandFilter
+            value={brandId}
+            categoryCode={categoryCode}
+            categoryGroupCode={categoryGroupCode}
             onChange={(e) => {
               if (+e.target.value === -1) {
                 params.delete('brand');
@@ -123,22 +93,15 @@ const ProductPage = () => {
               setParams(params);
             }}
           />
-          <FilterRadioGroup
-            label="Danh mục"
-            options={categories.map((category) => ({
-              value: category.code,
-              label: category.name,
-            }))}
-            value={categoryCode || -1}
+          <CategoryFilter
+            value={categoryCode}
+            brandId={brandId}
+            categoryGroupCode={categoryGroupCode}
             onChange={(e) => {
               if (+e.target.value === -1) {
-                params.delete('category');
-                params.set('page', 1);
-                return setParams(params);
+                return navigate(`/products/${categoryGroupCode}`);
               }
-              params.set('category', e.target.value);
-              params.set('page', 1);
-              setParams(params);
+              navigate(`/products/${categoryGroupCode}/${e.target.value}`);
             }}
           />
           <Box sx={{ my: 2 }} display="flex" justifyContent="center">
@@ -159,26 +122,14 @@ const ProductPage = () => {
         flexDirection="column"
         justifyContent="space-between">
         <Box variant="outlined" display="flex" justifyContent="flex-end">
-          <FormControl>
-            <InputLabel id="demo-simple-select-label">Sắp xếp theo</InputLabel>
-            <Select
-              sx={{ minWidth: '12rem' }}
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={sortBy}
-              label="Sắp xếp theo"
-              onChange={(e) => {
-                params.set('sortBy', e.target.value);
-                params.set('page', 1);
-                setParams(params);
-              }}>
-              {sortByOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <SortOptions
+            value={sortBy}
+            onChange={(e) => {
+              params.set('sortBy', e.target.value);
+              params.set('page', 1);
+              setParams(params);
+            }}
+          />
           <Divider />
         </Box>
         <Box sx={{ flexShrink: 1 }}>

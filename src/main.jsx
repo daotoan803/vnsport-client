@@ -19,9 +19,8 @@ import viLocale from 'date-fns/locale/vi';
 
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { AlertContextProvider } from './contexts/AlertContext';
-// import { SocketContextProvider } from './contexts/SocketContext';
-// import { ChatContextProvider } from './contexts/ChatContext';
-
+import { ChatContextProvider } from './contexts/ChatContext';
+import { CartContextProvider } from './contexts/CartContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 const queryClient = new QueryClient();
@@ -34,15 +33,17 @@ ReactDOM.render(
           <LocalizationProvider dateAdapter={DateAdapter} locale={viLocale}>
             <BrowserRouter>
               <AuthContextProvider>
-                {/* <ChatContextProvider> */}
-                <AlertContextProvider>
-                  <ModalContextProvider>
-                    <SideBarContextProvider>
-                      <App />
-                    </SideBarContextProvider>
-                  </ModalContextProvider>
-                </AlertContextProvider>
-                {/* </ChatContextProvider> */}
+                <ChatContextProvider>
+                  <CartContextProvider>
+                    <AlertContextProvider>
+                      <ModalContextProvider>
+                        <SideBarContextProvider>
+                          <App />
+                        </SideBarContextProvider>
+                      </ModalContextProvider>
+                    </AlertContextProvider>
+                  </CartContextProvider>
+                </ChatContextProvider>
               </AuthContextProvider>
             </BrowserRouter>
           </LocalizationProvider>

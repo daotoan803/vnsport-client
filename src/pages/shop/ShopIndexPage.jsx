@@ -39,6 +39,14 @@ const ShopIndexPage = () => {
             }
           />
           <Route
+            path="/products/:categoryGroupCode/:categoryCode"
+            element={
+              <Suspense fallback={<BackdropSpinner />}>
+                <ProductsPage />
+              </Suspense>
+            }
+          />
+          <Route
             path="/product/:id"
             element={
               <Suspense fallback={<BackdropSpinner />}>

@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 
 import { List } from '@mui/material';
 
-import ShowChartIcon from '@mui/icons-material/ShowChart';
 import RouterLink from '../../../navigation/SideBarLink';
 import SideBarItem from '../SideBarItem';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
@@ -11,16 +10,11 @@ import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import auth from '../../../../apis/auth.api';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import AuthContext from '../../../../contexts/AuthContext';
+import { availableRole } from './../../../../enums/user.enum';
 
 const adminNavigation = [
-  {
-    startIcon: <ShowChartIcon />,
-    text: 'Thống kê doanh số',
-    link: '/admin/dashboard',
-  },
   {
     startIcon: <Inventory2Icon />,
     text: 'Quản lý sản phẩm',
@@ -48,7 +42,7 @@ const AdminNavigationList = ({ toggleAdminMenu, toggleSideBar }) => {
 
   return (
     <List>
-      {authContext.role === auth.availableRole.admin && (
+      {authContext.role === availableRole.admin && (
         <SideBarItem
           onClick={toggleAdminMenu}
           startIcon={<ChevronLeftIcon />}

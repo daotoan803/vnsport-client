@@ -15,12 +15,8 @@ const AuthContext = createContext({
 export default AuthContext;
 
 export const AuthContextProvider = ({ children }) => {
-  const [role, setRole] = useState(
-    JSON.parse(localStorage.getItem('role')) || null
-  );
-  const [token, setToken] = useState(
-    JSON.parse(localStorage.getItem('token')) || null
-  );
+  const [role, setRole] = useState(localStorage.getItem('role') || '');
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem('user')) || null
   );
@@ -41,6 +37,28 @@ export const AuthContextProvider = ({ children }) => {
     setRole(null);
     setUser(null);
   };
+
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem('token', token);
+    } else {
+      localStorage.removeItem('token');
+    }
+  }, [token]);
+  useEffect(() => {
+    if (role) {
+      localStorage.setItem('role', role);
+    } else {
+      localStorage.removeItem('role');
+    }
+  }, [role]);
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }, [user]);
 
   useEffect(() => {
     if (token) {

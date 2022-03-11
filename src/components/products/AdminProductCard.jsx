@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatNumberToVnd } from './../../utils/currency.utils';
 
 import {
   Grid,
@@ -41,10 +42,12 @@ const AdminProductCard = ({ product }) => {
           Đã bán: {product.soldCount}
         </Typography>
         <Typography variant="caption">Trạng thái: {product.state}</Typography>
-        <Typography variant="subtitle1">Giá gốc: {product.price}</Typography>
+        <Typography variant="subtitle1">
+          Giá gốc: {formatNumberToVnd(product.price)}
+        </Typography>
         {product.discountPrice && (
           <Typography variant="body1">
-            Giá khuyến mãi: {product.discountPrice}
+            Giá khuyến mãi: {formatNumberToVnd(product.discountPrice)}
           </Typography>
         )}
       </CardContent>

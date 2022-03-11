@@ -43,17 +43,16 @@ const LoginModal = () => {
     if (loading) return;
 
     setLoading(true);
-    const res = await authApi.logIn(email, password);
+    const res = await authApi.signin({ email, password });
     setLoading(false);
 
     if (res.status === 200) {
       authContext.onLoginSuccess(res.data);
-
       modalContext.toggleLoginModal();
       alertContext.showSuccessAlert('Đăng nhập thành công');
       return;
     }
-    if (res.status === 400) {
+    if (res.status !== 400) {
       setLoginError(true);
     }
   };

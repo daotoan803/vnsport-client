@@ -7,11 +7,11 @@ import MainChatBox from '../../components/chat/MainChatBox';
 import UserInformationBox from './../../components/user/UserInformationBox';
 import ToggleSideMenuButton from './../../components/button/ToggleSideMenuButton';
 import AuthContext from './../../contexts/AuthContext';
-import authApi from './../../apis/auth.api';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import ChatContext from './../../contexts/ChatContext';
-import userApi from './../../apis/userApi';
+import userApi from './../../apis/user.api';
+import { availableRole } from './../../enums/user.enum';
 
 const AdminChatPage = () => {
   const authContext = useContext(AuthContext);
@@ -23,7 +23,7 @@ const AdminChatPage = () => {
     if (!chatRoomId) return;
 
     userApi.findUserInfo({ chatRoomId }).then((res) => {
-      setOpponentUser(res.data);
+      setOpponentUser(res.data.user);
     });
   }, [chatRoomId]);
 
@@ -31,7 +31,7 @@ const AdminChatPage = () => {
   const isLessThanLg = useMediaQuery(theme.breakpoints.down('lg'));
 
   useEffect(() => {
-    if (authContext.role !== authApi.availableRole.admin) {
+    if (authContext.role !== availableRole.admin) {
       navigate('/');
       return;
     }
@@ -39,7 +39,7 @@ const AdminChatPage = () => {
 
   return (
     <>
-      {authContext.role === authApi.availableRole.admin && (
+      {authContext.role === availableRole.admin && (
         <Grid
           container
           component={Box}

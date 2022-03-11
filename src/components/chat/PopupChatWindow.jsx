@@ -34,7 +34,7 @@ const PopupChatWindow = () => {
 
   useEffect(() => {
     setHaveNewMessage(true);
-  }, [messages.length]);
+  }, [messages]);
 
   return (
     <>

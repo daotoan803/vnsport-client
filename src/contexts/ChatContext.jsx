@@ -1,8 +1,8 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import AuthContext from './AuthContext';
 import chatSocketApi from '../apis/chatSocket.api';
-import auth from './../apis/auth.api';
 import chatApi from '../apis/chat.api';
+import { availableRole } from './../enums/user.enum';
 
 const ChatContext = createContext({
   loadingMessage: false,
@@ -23,7 +23,7 @@ export default ChatContext;
 export const ChatContextProvider = ({ children }) => {
   const [messages, setMessages] = useState([]);
   const [chatRoomId, setChatRoomId] = useState(null);
-  const [chatRooms, setChatRooms] = useState(null);
+  const [chatRooms, setChatRooms] = useState([]);
   const [loadingMessage, setLoadingMessage] = useState(false);
   const [loadingChatRooms, setLoadingChatRooms] = useState(false);
 
@@ -48,7 +48,7 @@ export const ChatContextProvider = ({ children }) => {
 
   const fetchOldMessages = () => {
     setLoadingMessage(true);
-    chatApi.fetchChat().then((res) => {
+    chatApi.getMessageBelongToCurrentUser().then((res) => {
       setLoadingMessage(false);
       setMessages(res.data.messages.messages);
     });
@@ -56,9 +56,9 @@ export const ChatContextProvider = ({ children }) => {
 
   const fetchChatRoomList = () => {
     setLoadingChatRooms(true);
-    chatApi.fetchChatRoomList().then((res) => {
+    chatApi.getChatRooms().then((res) => {
       setLoadingChatRooms(false);
-      setChatRooms(res.data);
+      setChatRooms(res.data.rooms.rows);
     });
   };
 
@@ -73,7 +73,7 @@ export const ChatContextProvider = ({ children }) => {
     chatSocketApi.joinNewRoom();
     fetchOldMessages();
     chatSocketApi.subscribeNewMessage(addNewMessage);
-    if (authContext.role === auth.availableRole.admin) {
+    if (authContext.role === availableRole.admin) {
       fetchChatRoomList();
       chatSocketApi.subscribeAllChatRoomNewMessages(addChatRooms);
     }
@@ -81,13 +81,14 @@ export const ChatContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (!chatRoomId) return;
+    if (!authContext.token) return;
 
     setLoadingMessage(true);
-    chatApi.fetchChatByRoomId({ roomId: chatRoomId }).then((res) => {
+    chatApi.getMessageByRoomId(chatRoomId).then((res) => {
       setLoadingMessage(false);
       setMessages(res.data.messages.messages);
     });
-  }, [chatRoomId]);
+  }, [chatRoomId, authContext.token]);
 
   const sendMessage = (message, images) => {
     if (!images && message.trim() === '') return;
@@ -110,6 +111,7 @@ export const ChatContextProvider = ({ children }) => {
   const onReadMessage = (chatRoomId) => {
     chatSocketApi.emitMessageRead(chatRoomId);
     setChatRooms((prev) => {
+      console.log(prev);
       return prev.map((chatRoom) => {
         if (chatRoom.chatRoomId === chatRoomId) {
           chatRoom.chatRoom.haveNewMessage = false;
