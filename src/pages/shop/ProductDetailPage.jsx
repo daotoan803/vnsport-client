@@ -32,7 +32,6 @@ const ProductDetailPage = () => {
 
   if (status !== 'success') return <h1>...Loading</h1>;
   const product = data.data;
-  console.log(product);
 
   return (
     <Grid component={Container} container spacing={5}>

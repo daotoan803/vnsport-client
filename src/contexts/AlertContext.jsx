@@ -22,6 +22,7 @@ export const AlertContextProvider = ({ children }) => {
         <Snackbar
           open={successAlertIsShowing}
           autoHideDuration={3000}
+          anchorOrigin={{horizontal: 'right', vertical:'top'}}
           onClose={() => {
             setSuccessAlertIsShowing(false);
           }}>

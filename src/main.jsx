@@ -32,19 +32,19 @@ ReactDOM.render(
         <ThemeProvider theme={theme}>
           <LocalizationProvider dateAdapter={DateAdapter} locale={viLocale}>
             <BrowserRouter>
-              <AuthContextProvider>
-                <ChatContextProvider>
-                  <CartContextProvider>
-                    <AlertContextProvider>
+              <AlertContextProvider>
+                <AuthContextProvider>
+                  <ChatContextProvider>
+                    <CartContextProvider>
                       <ModalContextProvider>
                         <SideBarContextProvider>
                           <App />
                         </SideBarContextProvider>
                       </ModalContextProvider>
-                    </AlertContextProvider>
-                  </CartContextProvider>
-                </ChatContextProvider>
-              </AuthContextProvider>
+                    </CartContextProvider>
+                  </ChatContextProvider>
+                </AuthContextProvider>
+              </AlertContextProvider>
             </BrowserRouter>
           </LocalizationProvider>
         </ThemeProvider>

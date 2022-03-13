@@ -2,9 +2,11 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import cartApi from '../apis/cart.api';
 import AuthContext from './AuthContext';
+import AlertContext from './AlertContext';
 
 const CartContext = createContext({
   cart: [],
+  totalPrice: 0,
   // eslint-disable-next-line no-unused-vars
   addProduct(productId) {},
   // eslint-disable-next-line no-unused-vars
@@ -35,13 +37,26 @@ export default CartContext;
 // };
 
 export const CartContextProvider = ({ children }) => {
+  const [totalPrice, setTotalPrice] = useState(0);
   const [cart, setCart] = useState([]);
   const authContext = useContext(AuthContext);
+  const alertContext = useContext(AlertContext);
 
   const loadUserCart = () =>
     cartApi.getUserCart().then(({ data }) => {
       setCart(data.cart);
     });
+
+  useEffect(() => {
+    let totalPrice = 0;
+    cart.forEach(
+      (product) =>
+        (totalPrice +=
+          product.quantity * Number(product.discountPrice || product.price))
+    );
+
+    setTotalPrice(totalPrice);
+  }, [cart]);
 
   useEffect(() => {
     if (authContext.token) {
@@ -51,23 +66,35 @@ export const CartContextProvider = ({ children }) => {
 
   const addProduct = (productId, quantity = 1) => {
     cartApi.addProductToUserCart(productId, quantity);
+    alertContext.showSuccessAlert('Thêm sản phẩm vào giỏ hàng thành công 🎉');
     return loadUserCart();
   };
 
   const updateQuantity = (productId, quantity = 1) => {
-    cartApi.updateProductQuantityInUserCart(productId, quantity);
-    return loadUserCart();
+    const promise = cartApi.updateProductQuantityInUserCart(
+      productId,
+      quantity
+    );
+    setCart((prev) =>
+      prev.map((product) => {
+        if (product.id === productId) product.quantity = quantity;
+        return product;
+      })
+    );
+    return promise;
   };
 
   const removeProduct = (productId) => {
-    cartApi.updateProductQuantityInUserCart(productId, 0);
-    return loadUserCart();
+    const promise = cartApi.updateProductQuantityInUserCart(productId, 0);
+    setCart((prev) => prev.filter((product) => productId !== product.id));
+    return promise;
   };
 
   return (
     <CartContext.Provider
       value={{
         cart,
+        totalPrice,
         addProduct,
         updateQuantity,
         removeProduct,
