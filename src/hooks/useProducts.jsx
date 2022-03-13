@@ -30,6 +30,7 @@ export default (
   return {
     status,
     products,
+    data,
     maxPage,
     totalProducts,
   };

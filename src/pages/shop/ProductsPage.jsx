@@ -41,6 +41,7 @@ const ProductPage = () => {
   const {
     status: productStatus,
     products,
+    data,
     maxPage,
   } = useProducts(page, LIMIT, {
     categoryGroupCode,
@@ -48,9 +49,14 @@ const ProductPage = () => {
     brandId,
     sortBy,
   });
+
   const toggleFilterExpand = () => {
     setFilterIsExpanded(!filterIsExpand);
   };
+
+  if (data?.status === 404) {
+    return <h1>No products here</h1>;
+  }
 
   const theme = useTheme();
   const breakPointIsLg = useMediaQuery(theme.breakpoints.up('md'));

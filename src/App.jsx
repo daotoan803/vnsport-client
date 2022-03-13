@@ -8,10 +8,11 @@ import BackdropSpinner from './components/suspend_fallback/BackdropSpinner';
 
 import SideBarContext from './contexts/SideBarContext';
 import ImageModal from './components/modal/ImageModal';
+import { Typography } from '@mui/material';
+import ShopIndexPage from './pages/shop/ShopIndexPage';
+import AdminIndexPage from './pages/admin/AdminIndexPage';
 
 const AdminChatPage = lazy(() => import('./pages/admin/AdminChatPage'));
-const ShopHomePage = lazy(() => import('./pages/shop/ShopIndexPage'));
-const AdminIndexPage = lazy(() => import('./pages/admin/AdminIndexPage'));
 const AdminProductPage = lazy(() => import('./pages/admin/AdminProductPage'));
 const AddProductPanel = lazy(() =>
   import('./pages/admin/product/AddProductPanel')
@@ -19,6 +20,9 @@ const AddProductPanel = lazy(() =>
 const ManageProductPanel = lazy(() =>
   import('./pages/admin/product/ManageProductPanel')
 );
+const ProductsPage = lazy(() => import('./pages/shop/ProductsPage'));
+const ProductDetailPage = lazy(() => import('./pages/shop/ProductDetailPage'));
+const OrderPage = lazy(() => import('./pages/shop/OrderPage'));
 
 const renderSuspense = (lazyComponent) => {
   return <Suspense fallback={<BackdropSpinner />}>{lazyComponent}</Suspense>;
@@ -37,7 +41,7 @@ const App = () => {
             path="admin/chat"
             element={renderSuspense(<AdminChatPage />)}
           />
-          <Route path="admin" element={renderSuspense(<AdminIndexPage />)}>
+          <Route path="admin" element={<AdminIndexPage />}>
             <Route
               path="products"
               element={renderSuspense(<AdminProductPage />)}>
@@ -47,7 +51,25 @@ const App = () => {
               <Route path="new" element={renderSuspense(<AddProductPanel />)} />
             </Route>
           </Route>
-          <Route path="/*" element={renderSuspense(<ShopHomePage />)} />
+          <Route path="/" element={<ShopIndexPage />}>
+            <Route
+              path="/products/:categoryGroupCode"
+              element={renderSuspense(<ProductsPage />)}
+            />
+            <Route
+              path="/products/:categoryGroupCode/:categoryCode"
+              element={renderSuspense(<ProductsPage />)}
+            />
+            <Route
+              path="/product/:id"
+              element={renderSuspense(<ProductDetailPage />)}
+            />
+            <Route path="/order" element={renderSuspense(<OrderPage />)} />
+            <Route
+              path="*"
+              element={<Typography variant="h1">404 Page not found</Typography>}
+            />
+          </Route>
         </Routes>
       </Box>
     </>

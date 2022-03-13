@@ -2,19 +2,37 @@ import React, { useContext } from 'react';
 
 import { Drawer, Typography, Box, Divider, Button } from '@mui/material';
 import SideBarContext from '../../../contexts/SideBarContext';
-import CartContext from './../../../contexts/CartContext';
 import ProductCartCard from '../../products/ProductCartCard';
 import { formatNumberToVnd } from './../../../utils/currency.utils';
+import CenteredSpinner from '../../suspend_fallback/CenteredSpinner';
+import { useNavigate } from 'react-router-dom';
+import useCart from '../../../hooks/useCart';
+
 const CartSideBar = () => {
   const sideBarContext = useContext(SideBarContext);
-  const cartContext = useContext(CartContext);
+  const navigate = useNavigate();
+
+  const {
+    cart,
+    status,
+    updateQuantity,
+    removeProduct,
+    isUpdatingQuantity,
+    totalPrice,
+  } = useCart();
 
   const onQuantityUpdate = (productId, quantity) => {
-    return cartContext.updateQuantity(productId, quantity);
+    updateQuantity(productId, quantity);
   };
 
   const onRemoveProductOutOfCart = (productId) => {
-    return cartContext.removeProduct(productId);
+    removeProduct(productId);
+  };
+
+  const onOrder = () => {
+    if (cart.length === 0) return;
+    sideBarContext.toggleCart;
+    navigate(`/order`);
   };
 
   return (
@@ -34,32 +52,40 @@ const CartSideBar = () => {
           Giỏ hàng của bạn
         </Typography>
         <Divider />
-        <Box
-          sx={{
-            overflow: 'auto',
-            height: '70vh',
-            border: '1px solid black',
-          }}>
-          {cartContext.cart.length === 0 && (
-            <Typography>Chưa có sản phâm nào trong giỏ hàng</Typography>
-          )}
-          {cartContext.cart.length > 0 &&
-            cartContext.cart.map((product) => (
-              <ProductCartCard
-                key={product.id}
-                product={product}
-                onUpdateQuantity={onQuantityUpdate}
-                onDelete={onRemoveProductOutOfCart}
-              />
-            ))}
-        </Box>
+        {status === 'loading' && <CenteredSpinner />}
+        {status === 'success' && (
+          <Box
+            sx={{
+              overflow: 'auto',
+              height: '70vh',
+              border: '1px solid black',
+            }}>
+            {cart.length === 0 && (
+              <Typography>Chưa có sản phâm nào trong giỏ hàng</Typography>
+            )}
+            {cart.length > 0 &&
+              cart.map((product) => (
+                <ProductCartCard
+                  key={product.id}
+                  product={product}
+                  isUpdatingQuantity={isUpdatingQuantity}
+                  onUpdateQuantity={onQuantityUpdate}
+                  onDelete={onRemoveProductOutOfCart}
+                />
+              ))}
+          </Box>
+        )}
         <Box px={2}>
           <Typography variant="h6" align="right">
-            Tổng tiền: {formatNumberToVnd(cartContext.totalPrice)}
+            Tổng tiền: {formatNumberToVnd(totalPrice)}
           </Typography>
         </Box>
         <Box display="flex" justifyContent="center" my={3}>
-          <Button variant="contained" size="large">
+          <Button
+            variant="contained"
+            size="large"
+            onClick={onOrder}
+            disabled={cart.length === 0}>
             Đặt hàng
           </Button>
         </Box>

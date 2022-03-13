@@ -20,7 +20,7 @@ import viLocale from 'date-fns/locale/vi';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { AlertContextProvider } from './contexts/AlertContext';
 import { ChatContextProvider } from './contexts/ChatContext';
-import { CartContextProvider } from './contexts/CartContext';
+// import { CartContextProvider } from './contexts/CartContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 const queryClient = new QueryClient();
@@ -35,13 +35,13 @@ ReactDOM.render(
               <AlertContextProvider>
                 <AuthContextProvider>
                   <ChatContextProvider>
-                    <CartContextProvider>
+                    {/* <CartContextProvider> */}
                       <ModalContextProvider>
                         <SideBarContextProvider>
                           <App />
                         </SideBarContextProvider>
                       </ModalContextProvider>
-                    </CartContextProvider>
+                    {/* </CartContextProvider> */}
                   </ChatContextProvider>
                 </AuthContextProvider>
               </AlertContextProvider>

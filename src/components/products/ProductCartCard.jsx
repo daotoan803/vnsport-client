@@ -9,15 +9,20 @@ import {
   Box,
   Button,
   Typography,
+  Tooltip,
 } from '@mui/material';
 
-const ProductCartCard = ({ product, onUpdateQuantity, onDelete }) => {
+const ProductCartCard = ({
+  product,
+  onUpdateQuantity,
+  onDelete,
+  isUpdatingQuantity=false,
+  disableUpdateQuantity = false,
+}) => {
   const [quantity, setQuantity] = useState(product.quantity);
-  const [loading, setLoading] = useState(false);
 
   const updateQuantity = () => {
-    setLoading(true);
-    onUpdateQuantity(product.id, quantity).then(() => setLoading(false));
+    onUpdateQuantity(product.id, quantity);
   };
 
   return (
@@ -50,17 +55,20 @@ const ProductCartCard = ({ product, onUpdateQuantity, onDelete }) => {
             }}>
             <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
               <label htmlFor="quantity">Số lượng :</label>
-              <input
-                id="quantity"
-                type="number"
-                value={quantity}
-                onChange={(e) => {
-                  if (e.target.value >= 1) setQuantity(e.target.value);
-                }}
-                disabled={loading}
-                onBlur={updateQuantity}
-                style={{ padding: '10px', width: '70px' }}
-              />
+              <Tooltip title={`Có sẵn: ${product.availableQuantity} sản phẩm`}>
+                <input
+                  id="quantity"
+                  type="number"
+                  value={quantity}
+                  onChange={({ target: { value } }) => {
+                    if (value < 1) return setQuantity(1);
+                    setQuantity(Math.min(product.availableQuantity, value));
+                  }}
+                  disabled={isUpdatingQuantity || disableUpdateQuantity}
+                  onBlur={updateQuantity}
+                  style={{ padding: '10px', width: '70px' }}
+                />
+              </Tooltip>
             </Box>
             <Typography variant="body1">
               {formatNumberToVnd(

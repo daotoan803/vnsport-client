@@ -8,17 +8,17 @@ import {
   Typography,
   Breadcrumbs,
   Link,
-  Button,
 } from '@mui/material';
 import OpenableImage from '../../components/image/OpenableImage';
 import { useQuery } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import { formatNumberToVnd } from './../../utils/currency.utils';
-import CartContext from './../../contexts/CartContext';
+// import CartContext from './../../contexts/CartContext';
 import AuthContext from './../../contexts/AuthContext';
 import ToggleLoginModalButton from '../../components/button/ToggleLoginModalButton';
 import ToggleSignupModalButton from '../../components/button/ToggleSignupModalButton';
 import { state } from './../../enums/product.enum';
+import AddToCartButton from './../../components/button/AddToCartButton';
 
 const ProductDetailPage = () => {
   const { id: productId } = useParams();
@@ -27,9 +27,10 @@ const ProductDetailPage = () => {
     productApi.getProduct(productId)
   );
 
-  const cartContext = useContext(CartContext);
+  // const cartContext = useContext(CartContext);
   const authContext = useContext(AuthContext);
 
+  if (data?.status === 404) return <h1>Product not exists</h1>;
   if (status !== 'success') return <h1>...Loading</h1>;
   const product = data.data;
 
@@ -73,7 +74,7 @@ const ProductDetailPage = () => {
             <Typography variant="h4" color="error">
               {formatNumberToVnd(product.discountPrice || product.price)}
             </Typography>
-            {!product.discountPrice && (
+            {product.discountPrice && (
               <Typography
                 variant="h6"
                 sx={{ textDecoration: 'line-through', color: '#6e6e6e' }}>
@@ -87,6 +88,9 @@ const ProductDetailPage = () => {
             Đã bán: {product.soldCount}
           </Typography>
           <Typography variant="subtitle2">
+            Trong kho: {product.availableQuantity}
+          </Typography>
+          <Typography variant="subtitle2">
             Thương hiệu: {product.brand.name}
           </Typography>
           <Typography variant="subtitle2">
@@ -98,14 +102,9 @@ const ProductDetailPage = () => {
             <>
               {authContext.isLoggedIn && (
                 <>
-                  <Button variant="contained" color="primary">
-                    Đặt mua ngay
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    onClick={() => cartContext.addProduct(product.id)}>
+                  <AddToCartButton productId={productId}>
                     Thêm vào giỏ hàng
-                  </Button>
+                  </AddToCartButton>
                 </>
               )}
               {!authContext.isLoggedIn && (
