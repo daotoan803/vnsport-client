@@ -1,12 +1,25 @@
-import axios from 'axios';
-import handleRequest from './utils/handle-request';
-
-export const getProvince = () =>
-  handleRequest(axios.get('https://provinces.open-api.vn/api/p/'));
-
-export const getDistrictByProvinceCode = (provinceCode) =>
-  handleRequest(
-    axios.get(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`)
+export const getProvince = async () => {
+  const res = await fetch('https://provinces.open-api.vn/api/p/');
+  const data = await res.json();
+  return { status: res.status, data };
+};
+export const getDistrictByProvinceCode = async (provinceCode) => {
+  const res = await fetch(
+    `https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`
   );
+  const data = await res.json();
+  return { status: res.status, data };
+};
+export const getSubDistrictByDistrictCode = async (districtCode) => {
+  const res = await fetch(
+    `https://provinces.open-api.vn/api/d/${districtCode}?depth=2`
+  );
+  const data = await res.json();
+  return { status: res.status, data };
+};
 
-export const getSubDistrictByDistrictCode = (districtCode) => handleRequest(axios.get(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`))
+export default {
+  getProvince,
+  getDistrictByProvinceCode,
+  getSubDistrictByDistrictCode,
+};

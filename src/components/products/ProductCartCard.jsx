@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { formatNumberToVnd } from './../../utils/currency.utils';
+import { useNavigate } from 'react-router-dom';
 import {
   Card,
   CardMedia,
@@ -16,17 +17,22 @@ const ProductCartCard = ({
   product,
   onUpdateQuantity,
   onDelete,
-  isUpdatingQuantity=false,
+  isUpdatingQuantity = false,
   disableUpdateQuantity = false,
 }) => {
   const [quantity, setQuantity] = useState(product.quantity);
-
+  const navigate = useNavigate();
   const updateQuantity = () => {
     onUpdateQuantity(product.id, quantity);
   };
 
+  const onCardClick = () => {
+    navigate(`/product/${product.id}`);
+    
+  };
+
   return (
-    <Grid container component={Card}>
+    <Grid container component={Card} sx={{ cursor: 'pointer' }}>
       <Grid item xs={4}>
         <CardMedia
           component="img"
@@ -60,6 +66,7 @@ const ProductCartCard = ({
                   id="quantity"
                   type="number"
                   value={quantity}
+                  onClick={(e) => e.stopPropagation()}
                   onChange={({ target: { value } }) => {
                     if (value < 1) return setQuantity(1);
                     setQuantity(Math.min(product.availableQuantity, value));
@@ -76,7 +83,10 @@ const ProductCartCard = ({
               )}
             </Typography>
           </Box>
-          <Box display="flex" justifyContent="flex-end">
+          <Box display="flex" justifyContent="flex-end" gap={2}>
+            <Button variant="contained" onClick={onCardClick}>
+              Xem
+            </Button>
             <Button
               startIcon={<DeleteIcon />}
               variant="outlined"
